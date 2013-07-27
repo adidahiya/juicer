@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Juicer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.1/pure-min.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css">
+</head>
+<body>
+
+  <h1>Juicer</h1>
+
+  <div class="juicer-controller" ng-controller="JuicerController">
+    <input type="text" ng-model="name" placeholder="Enter name..." />
+    <p>Hello {{name}}</p>
+  </div> <!-- END juicer-controller -->
+
+  <!--[if lt ie 8]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script data-main="assets/javascripts/main.js" src="assets/javascripts/vendor/require.js"></script>
+</body>
+</html>
