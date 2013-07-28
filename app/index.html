@@ -11,16 +11,21 @@
   <div class="juicer-controller" ng-controller="JuicerController">
     <div class="pure-g top">
       <div class="properties pure-u-1-4">
-        <h3>Object Properties</h3>
-        <ul>
+        <h3 class="panel-title">Object Properties</h3>
+        <ul ng-show="selectedLayer">
           <li> <span>Width</span>   {{selectedLayer.width}}  </li>
           <li> <span>Height</span>  {{selectedLayer.height}} </li>
           <li> <span>X</span>       {{selectedLayer.x}}      </li>
           <li> <span>Y</span>       {{selectedLayer.y}}      </li>
         </ul>
+        <p ng-hide="selectedLayer">
+          No object selected.
+        </p>
       </div>
       <div class="scene pure-u-3-4">
-          <div class="layer" ng-repeat="layer in layers" ng-class="{selected: isLayerSelected(layer)}">
+        <h3 class="panel-title">Scene</h3>
+        <div class="layer" ng-repeat="layer in layers"
+          ng-class="{selected: isLayerSelected(layer)}">
           <span>{{layer.name}}</span>
         </div>
       </div>
@@ -28,7 +33,7 @@
 
     <div class="pure-g bottom">
       <div class="layers pure-u-1-4">
-        Layers
+        <h3 class="panel-title">Layers</h3>
         <ul>
             <li ng-repeat="layer in layers" ng-click="selectLayer(layer)" ng-class="{selected: isLayerSelected(layer)}">
             <span>{{layer.name}}</span>

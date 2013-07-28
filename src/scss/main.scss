@@ -9,10 +9,21 @@ $gray: #888;
   box-sizing: border-box;
 }
 
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 html, body, .juicer-controller {
   height: 100%;
 }
 
+.panel-title {
+  margin: 0;
+  padding: 5px;
+  border-bottom: solid 1px $lightGray;
+}
 
 // Top half of UI
 // ---------------------------------------------------------------------------
@@ -22,7 +33,20 @@ html, body, .juicer-controller {
 
 .properties {
   height: 100%;
-  border-bottom: solid 1px $lightGray;
+
+  > ul {
+    li {
+      border-bottom: solid 1px $lightGray;
+      padding: 5px;
+
+      > span {
+        color: $gray;
+        font-style: italic;
+        display: inline-block;
+        width: 30%;
+      }
+    }
+  }
 }
 
 .scene {
@@ -34,6 +58,10 @@ html, body, .juicer-controller {
 // ---------------------------------------------------------------------------
 .pure-g.bottom {
   height: 25%;
+}
+
+.layers {
+  border-top: solid 1px $lightGray;
 }
 
 .timeline {

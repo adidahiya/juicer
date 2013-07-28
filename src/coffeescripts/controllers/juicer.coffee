@@ -36,7 +36,7 @@ define (require) ->
         $scope.selectedLayer = layer
 
       $scope.isLayerSelected = (layer) ->
-        $scope.selectedLayer == layer
+        $scope.selectedLayer is layer
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']

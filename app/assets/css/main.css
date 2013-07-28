@@ -1,15 +1,32 @@
 * {
   box-sizing: border-box; }
 
+ul, ol {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+
 html, body, .juicer-controller {
   height: 100%; }
+
+.panel-title {
+  margin: 0;
+  padding: 5px;
+  border-bottom: solid 1px #cccccc; }
 
 .pure-g.top {
   height: 75%; }
 
 .properties {
-  height: 100%;
-  border-bottom: solid 1px #cccccc; }
+  height: 100%; }
+  .properties > ul li {
+    border-bottom: solid 1px #cccccc;
+    padding: 5px; }
+    .properties > ul li > span {
+      color: #888888;
+      font-style: italic;
+      display: inline-block;
+      width: 30%; }
 
 .scene {
   height: 100%;
@@ -17,6 +34,9 @@ html, body, .juicer-controller {
 
 .pure-g.bottom {
   height: 25%; }
+
+.layers {
+  border-top: solid 1px #cccccc; }
 
 .timeline {
   border: solid 1px #cccccc; }
