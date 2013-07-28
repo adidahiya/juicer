@@ -6,6 +6,7 @@ define (require) ->
 
   DEBUG = true
   MAX_ANIMATION_TIME = 300
+  DEFAULT_ZOOM_LEVEL = 50
 
   initAppModule = () ->
 
@@ -38,13 +39,14 @@ define (require) ->
     window.JuicerController = ($scope, $timeout) ->
 
       # Scene
-      $scope.zoomLevel = 0
+      $scope.zoomLevel = 50
       # TODO: make not static
       $scope.xOffset = 300
       $scope.yOffset = 200
       $scope.currentScale = 1
 
-      $scope.rescale = (scale) ->
+      $scope.zoom = () ->
+        scale       = $scope.zoomLevel / DEFAULT_ZOOM_LEVEL
         halfWidth   = $scope.rendererWidth / 2
         halfHeight  = $scope.rendererHeight / 2
 
@@ -52,7 +54,10 @@ define (require) ->
         yCenter = ($scope.yOffset - halfHeight) * scale
         $scope.xOffset = xCenter + halfWidth
         $scope.yOffset = yCenter + halfHeight
-        $scope.currentScale *= scale
+        $scope.currentScale = scale
+
+      $scope.pan =
+        isActive: false
 
       # Timeline
       $scope.keyframedProperties = [
@@ -77,6 +82,14 @@ define (require) ->
       $scope.pause = () ->
         $scope.isPaused = true
         $timeout.cancel $scope.playInterval
+
+      $scope.setPlaySpeed = (factor) ->
+        unless $scope.isPaused
+          $scope.pause()
+          didPause = true
+        $scope.playSpeed *= factor
+        if didPause
+          $scope.play()
 
       $scope.visibleTicks =
         for i in [$scope.timeStart..$scope.timeEnd]

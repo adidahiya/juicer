@@ -13,7 +13,8 @@
       <div class="scene pure-u-3-4">
         <h3 class="panel-title">Scene</h3>
         <div class="scene-controls">
-          <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
+          <input class="zoom" type="range" min="0" max="100"
+            ng-model="zoomLevel" ng-change="zoom()">
           <span>Zoom: {{zoomLevel}}</span>
           <input type="button" ng-click="rescale(2)" value="2x">
           <input type="button" ng-click="rescale(0.5)" value="0.5x">
