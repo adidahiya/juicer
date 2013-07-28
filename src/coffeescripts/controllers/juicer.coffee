@@ -40,6 +40,29 @@ define (require) ->
 
     window.JuicerController = ($scope, $timeout) ->
 
+      $scope.download = () ->
+        images = _.map $scope.objects[1..], (obj) ->
+          _.pick obj, 'name'
+        frames = []
+        for t in [$scope.timeStart...$scope.timeEnd]
+          frame = {}
+          for object in $scope.objects[1..]
+            renderedProperties = $scope.getObjectStyle(object)
+            frame[object.name] =
+              left:   "#{renderedProperties.left - $scope.camera.xOffset}px"
+              top:    "#{renderedProperties.top - $scope.camera.yOffset}px"
+              width:  "#{renderedProperties.width}px"
+              height: "#{renderedProperties.height}px"
+          frames.push frame
+
+        data =
+          camera:
+            width: $('#camera-view').width()
+            height: $('#camera-view').height()
+          images: images
+          frames: frames
+        console.log (JSON.stringify data)
+
       # Scene navigation
       # ----------------------------------------------------------------------
       $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
