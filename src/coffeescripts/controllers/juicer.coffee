@@ -67,6 +67,10 @@ define (require) ->
       $scope.setPropertyAtFrame = (property, time, val) ->
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
 
+      $scope.setObjectAtFrame = (time, object) ->
+        for property in $scope.keyframedProperties
+          $scope.setPropertyAtFrame property, time, object[property]
+
       $scope.addKeyframe = () ->
         unless $scope.selectedObject?
           $scope.error = "No object selected to keyframe."
@@ -116,6 +120,12 @@ define (require) ->
                 name = $scope.selectedObject.name
                 rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property])
                 $scope.setPropertyAtFrame property, time, rv.toFixed(3)
+          else
+            time = $scope.time
+            while time isnt TIME_BOUND
+              $scope.setObjectAtFrame time, $scope.selectedObject
+              time += TIME_STEP
+            $scope.setObjectAtFrame time, $scope.selectedObject
 
         # Walk backwards to interpolate values
         if $scope.time > $scope.timeStart

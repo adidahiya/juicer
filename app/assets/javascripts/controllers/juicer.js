@@ -80,6 +80,16 @@
         $scope.setPropertyAtFrame = function(property, time, val) {
           return $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val;
         };
+        $scope.setObjectAtFrame = function(time, object) {
+          var property, _i, _len, _ref, _results;
+          _ref = $scope.keyframedProperties;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            property = _ref[_i];
+            _results.push($scope.setPropertyAtFrame(property, time, object[property]));
+          }
+          return _results;
+        };
         $scope.addKeyframe = function() {
           var frame, property, runInterpolationWalk, _i, _len, _ref;
           if ($scope.selectedObject == null) {
@@ -144,6 +154,13 @@
                 })());
               }
               return _results;
+            } else {
+              time = $scope.time;
+              while (time !== TIME_BOUND) {
+                $scope.setObjectAtFrame(time, $scope.selectedObject);
+                time += TIME_STEP;
+              }
+              return $scope.setObjectAtFrame(time, $scope.selectedObject);
             }
           };
           if ($scope.time > $scope.timeStart) {
