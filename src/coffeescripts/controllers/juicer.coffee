@@ -165,6 +165,7 @@ define (require) ->
         top:    $scope.currentScale * object.y + $scope.camera.yOffset + SCENE_TOP_PADDING
         width:  $scope.currentScale * object.width
         height: $scope.currentScale * object.height
+        "-webkit-transform": "rotate(#{object.rotation}deg)"
 
       $scope.getObjectNames = -> _.pluck $scope.objects, 'name'
 
@@ -177,6 +178,7 @@ define (require) ->
             height: DEFAULT_IMAGE_SIZE
             x: -(DEFAULT_IMAGE_SIZE / 2)
             y: -(DEFAULT_IMAGE_SIZE / 2)
+            rotation: 0
           $scope.objects.push newObject
           $scope.selectObject newObject
           $scope.newObjectName = null
