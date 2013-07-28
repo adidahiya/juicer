@@ -117,14 +117,14 @@ define (require) ->
           for property in $scope.keyframedProperties
             $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
 
-      $scope.setPropertyAtFrame = (property, time, val) ->
-        console.log "setPropertyAtFrame", property, time, val
+      $scope.setPropertyAtTime = (property, time, val) ->
+        console.log "setPropertyAtTime", property, time, val
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
 
-      $scope.setObjectAtFrame = (time, object) ->
-        console.log "setPropertyAtFrame", time, object
+      $scope.setObjectAtTime = (time, object) ->
+        console.log "setObjectAtTime", time, object
         for property in $scope.keyframedProperties
-          $scope.setPropertyAtFrame property, time, object[property]
+          $scope.setPropertyAtTime property, time, object[property]
 
       $scope.addKeyframe = () ->
         unless $scope.selectedObject?
@@ -139,10 +139,10 @@ define (require) ->
         delete frame.keys[$scope.selectedObject.name]
 
         # Re-interpolate neighbors
-        forwardTime = $scope.findNextFrameTime($scope.time, true, $scope.selectedObject.name)
+        forwardTime = $scope.findKeyFrame($scope.time, true, $scope.selectedObject.name, $scope.frames)
         if forwardTime is MAX_ANIMATION_TIME
           # neighbor not found
-          backTime = $scope.findNextFrameTime($scope.time, false, $scope.selectedObject.name)
+          backTime = $scope.findKeyFrame($scope.time, false, $scope.selectedObject.name, $scope.frames)
           if backTime isnt 0
             $scope.setKeyFrame(parseInt(backTime))
           else
@@ -150,76 +150,60 @@ define (require) ->
         else
             $scope.setKeyFrame(parseInt(forwardTime))
 
-      $scope.findNextFrameTime = (time, isForward, name) ->
-        TIME_STEP  = if isForward then 1 else -1
-        TIME_BOUND = if isForward then MAX_ANIMATION_TIME else 0
-        frameRunner = $scope.frames[time]
-        while not frameRunner.keys[name]
-          if time is TIME_BOUND
+      $scope.findKeyFrame = (timeStart, timeEnd, timeStep, name, frames) ->
+        while timeStart isnt timeEnd
+          if frames[timeStart].keys[name]
             break
-          time += TIME_STEP
-          frameRunner = $scope.frames[time]
-        return time
+          timeStart += timeStep
+        return timeStart
       
-      $scope.fill = (start, end, step) ->
-        while start isnt end
-          $scope.setObjectAtFrame start, $scope.selectedObject
-          start += step
-        $scope.setObjectAtFrame start, $scope.selectedObject
+      $scope.fill = (timeStart, timeEnd, timeStep) ->
+        while timeStart isnt timeEnd
+          $scope.setObjectAtTime timeStart, $scope.selectedObject
+          timeStart += timeStep
+        $scope.setObjectAtTime timeStart, $scope.selectedObject
+
+      # Fill in all interpolated values based on frameStep
+      $scope.interpolate = (timeStart, timeEnd, timeStep, name, frames) ->
+        console.log "interpolate", timeEnd
+        getDifference = (objectStart, objectEnd) ->
+          console.log "getDifference", objectStart, objectEnd
+          difference = {}
+          for property in $scope.keyframedProperties
+            dProp = objectEnd[property] - objectStart[property]
+            dT = timeEnd - timeStart
+            difference[property] = parseFloat(dProp / dT)
+          console.log "difference", difference
+          return difference
+        objectStart = frames[timeStart].interpolatedValues[name]
+        objectEnd = frames[timeEnd].interpolatedValues[name]
+        objectDifference = getDifference(objectStart, objectEnd)
+
+        t = 0
+        while timeStart + t isnt timeEnd
+          time = timeStart + t
+          for property in $scope.keyframedProperties
+            rv = parseFloat(objectStart[property]) + objectDifference[property] * t
+            console.log "!", parseFloat(objectStart[property]), objectDifference[property] * t
+            $scope.setPropertyAtTime property, time, rv.toFixed(3)
+          t += timeStep
 
       $scope.setKeyFrame = (time) ->
+        $scope.frames[time].keys[$scope.selectedObject.name] = true
+        $scope.setObjectAtTime time, $scope.selectedObject
 
-        runInterpolationWalk = (scope_time, isForward) ->
-          TIME_STEP  = if isForward then 1 else -1
-          TIME_BOUND = if isForward then MAX_ANIMATION_TIME else 0
-
-          getFrameSteps = (time, targetFrame) ->
-            # Calculate interpolation step between targetFrame and current
-            frameSteps = {}
-            timeDiff = scope_time - time
-            for property in $scope.keyframedProperties
-              frameSteps[property] = ($scope.selectedObject[property] - targetFrame[property]) / timeDiff
-              # Invert if going forward
-              if isForward
-                frameSteps[property] *= -1
-            return frameSteps
-
-          frameRunner = $scope.frames[scope_time + TIME_STEP]
-          nextTime = $scope.findNextFrameTime(scope_time + TIME_STEP, isForward, $scope.selectedObject.name)
-
-          if nextTime is TIME_BOUND
-            $scope.fill scope_time, TIME_BOUND, TIME_STEP
+        runInterpolationWalk = (timeStart, timeBound, timeStep, name, frames) ->
+          timeEnd = $scope.findKeyFrame(timeStart + timeStep, timeBound, timeStep, name, frames)
+          if timeEnd is timeBound
+            $scope.fill timeStart, timeEnd, timeStep
           else
-            frameSteps = getFrameSteps(nextTime, frameRunner.interpolatedValues[$scope.selectedObject.name])
-            # Fill in all interpolated values based on frameStep
-            console.log "scope_time", scope_time
-            while nextTime isnt scope_time
-              nextTime -= TIME_STEP
-              frameRunner     = $scope.frames[nextTime]
-              prevFrameRunner = $scope.frames[nextTime + TIME_STEP]
-              for property in $scope.keyframedProperties
-                name = $scope.selectedObject.name
-                rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property])
-                $scope.setPropertyAtFrame property, nextTime, rv.toFixed(3)
+            $scope.interpolate timeStart, timeEnd, timeStep, name, frames
 
-        frame = $scope.frames[time]
-        frame.keys[$scope.selectedObject.name] = true
+        name = $scope.selectedObject.name
+        frames = $scope.frames
 
-        for property in $scope.keyframedProperties
-          $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property]
-
-        # Walk backwards to interpolate values
-        if time > $scope.timeStart
-          runInterpolationWalk(time, false)
-          console.log $scope.frames
-
-        # Update furthestFrameTime for this object
-        if $scope.selectedObject.furthestFrameTime < time
-          $scope.selectedObject.furthestFrameTime = time
-        else
-          # Walk forwards to interpolate values, too
-          runInterpolationWalk(time, true)
-          console.log $scope.frames
+        runInterpolationWalk(time, 0, -1, name, frames)
+        runInterpolationWalk(time, MAX_ANIMATION_TIME, 1, name, frames)
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope', '$timeout']
