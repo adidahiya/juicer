@@ -90,6 +90,7 @@ html, body, .juicer-controller {
   .scene-objects {
     width: 100%;
     height: calc(100% - 33px);
+    float: left;
 
     .object {
       position: absolute;

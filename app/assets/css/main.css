@@ -55,7 +55,8 @@ html, body, .juicer-controller {
       height: 33px; }
   .scene .scene-objects {
     width: 100%;
-    height: calc(100% - 33px); }
+    height: calc(100% - 33px);
+    float: left; }
     .scene .scene-objects .object {
       position: absolute;
       background: #888888; }

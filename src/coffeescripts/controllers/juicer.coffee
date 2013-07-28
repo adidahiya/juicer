@@ -16,8 +16,8 @@ define (require) ->
     appModule.directive "renderWindow", () ->
       restrict: 'E'
       link: ($scope, $element, attrs) ->
-        $scope.rendererWidth  = $element.width()
-        $scope.rendererHeight = $element.height()
+        $scope.rendererWidth  = parseInt $element.width()
+        $scope.rendererHeight = parseInt $element.height()
         $scope.xOffset = $scope.rendererWidth / 2
         $scope.yOffset = $scope.rendererHeight / 2
 
