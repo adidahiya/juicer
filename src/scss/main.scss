@@ -75,12 +75,13 @@ input[type=button], input[type=submit] {
         color: $gray;
         font-style: italic;
         display: inline-block;
-        width: 30%;
+        width: 50%;
       }
 
       input {
         border: solid 1px $lightGray;
         padding: 4px;
+        width: 150px;
       }
     }
   }
