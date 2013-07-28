@@ -114,13 +114,15 @@ html, body, .juicer-controller {
 
 .timeline {
   border: solid 1px $lightGray;
+  position: relative;
 
   input[type=range] {
     -webkit-appearance: none;
-    background-color: white;
+    position: absolute;
     width: 100%;
     height: 100px;
     outline: none;
+    background: transparent;
   }
 
   input[type=range]::-webkit-slider-thumb {
@@ -150,4 +152,22 @@ html, body, .juicer-controller {
 
 .selected {
      color: green;
+}
+
+.keyframes {
+     width: 100%;
+     height: 100px;
+
+     .tick {
+      display: inline-block;
+      width: 2%;
+      height: 20px;
+      padding: 2px;
+      border-left: solid 1px #DDD;
+
+      &.active {
+        background: $lightGray;
+        border-color: $gray;
+      }
+     }
 }
