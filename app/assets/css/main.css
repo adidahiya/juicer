@@ -42,3 +42,6 @@ html, body, .juicer-controller {
       .timeline .scale .tick.active {
         background: #cccccc;
         border-color: #888888; }
+
+.selected {
+  color: green; }

@@ -26,13 +26,17 @@ define (require) ->
 
       $scope.addLayer = ->
         if $scope.layer?
-          $scope.layers.push
+          layer =
             name: $scope.layer
-          $scope.selectedLayer = layer
+          $scope.layers.push layer
+          $scope.selectLayer layer
           $scope.layer = null
 
-      $scope.selectLayer = ->
-        $scope.selectedLayer = null
+      $scope.selectLayer = (layer) ->
+        $scope.selectedLayer = layer
+
+      $scope.isLayerSelected = (layer) ->
+        $scope.selectedLayer == layer
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']

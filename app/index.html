@@ -20,7 +20,7 @@
         </ul>
       </div>
       <div class="scene pure-u-3-4">
-        <div class="layer" ng-repeat="layer in layers">
+          <div class="layer" ng-repeat="layer in layers" ng-class="{selected: isLayerSelected(layer)}">
           <span>{{layer.name}}</span>
         </div>
       </div>
@@ -30,7 +30,7 @@
       <div class="layers pure-u-1-4">
         Layers
         <ul>
-          <li ng-repeat="layer in layers" ng-click="selectLayer()">
+            <li ng-repeat="layer in layers" ng-click="selectLayer(layer)" ng-class="{selected: isLayerSelected(layer)}">
             <span>{{layer.name}}</span>
           </li>
         </ul>
