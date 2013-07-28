@@ -29,13 +29,15 @@
       </div>
       <div class="scene pure-u-3-4">
         <h3 class="panel-title">Scene</h3>
-        <div class="object" ng-repeat="object in objects"
-          ng-class="{selected: isObjectSelected(object)}">
-          <span>{{object.name}}</span>
-        </div>
         <div class="scene-controls">
           <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
           <span>Zoom: {{zoomLevel}}</span>
+        </div>
+        <div class="scene-objects">
+          <div class="object" ng-repeat="object in objects"
+            ng-class="{selected: isObjectSelected(object)}">
+            <span>{{object.name}}</span>
+          </div>
         </div>
       </div>
     </div>
