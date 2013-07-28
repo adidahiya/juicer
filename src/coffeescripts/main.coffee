@@ -4,6 +4,7 @@ require.config
     jquery:     'vendor/jquery-2.0.3.min'
     underscore: 'vendor/lodash.min'
     angular:    'vendor/angular.min'
+    filer:      'vendor/filer.min'
   shim:
     underscore:
       deps: []
@@ -11,6 +12,9 @@ require.config
     angular:
       deps: []
       exports: 'angular'
+    filer:
+      deps: []
+      exports: 'filer'
 
 define (require, exports, module) ->
 
