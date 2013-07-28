@@ -29,7 +29,7 @@
         <render-window class="scene-objects">
           <div class="object" ng-repeat="object in objects"
             ng-class="{selected: isObjectSelected(object)}"
-            ng-style="getObjectStyle(object)">
+            ng-style="getObjectStyle(object)" draggable>
             <img ng-src="{{object.src}}"/>
           </div>
           <div id="camera-view">

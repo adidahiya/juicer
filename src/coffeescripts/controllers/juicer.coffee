@@ -41,6 +41,11 @@ define (require) ->
         $element.mouseup (event) => $scope.pan.isActive = false
         $element.mouseleave (event) => $scope.pan.isActive = false
 
+    appModule.directive 'draggable', () ->
+      restrict: 'A'
+      link: ($scope, $element, attrs) ->
+        $element.on 'click', (event) =>
+          $scope.selectObject($scope.object)
     window.JuicerController = ($scope, $timeout) ->
 
       $scope.download = () ->
