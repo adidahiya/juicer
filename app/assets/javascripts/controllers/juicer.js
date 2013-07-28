@@ -159,7 +159,7 @@
             $scope.error = "No object selected to keyframe.";
             return;
           }
-          return $scope.setKeyFrame($scope.time);
+          return $scope.setKeyFrame(parseInt($scope.time));
         };
         $scope.removeKeyframe = function() {
           var backTime, forwardTime, frame;
@@ -170,12 +170,12 @@
           if (forwardTime === MAX_ANIMATION_TIME) {
             backTime = $scope.findNextFrameTime($scope.time, false, $scope.selectedObject.name);
             if (backTime !== 0) {
-              return $scope.setKeyFrame(backTime);
+              return $scope.setKeyFrame(parseInt(backTime));
             } else {
               return $scope.fill(0, MAX_ANIMATION_TIME, 1);
             }
           } else {
-            return $scope.setKeyFrame(forwardTime);
+            return $scope.setKeyFrame(parseInt(forwardTime));
           }
         };
         $scope.findNextFrameTime = function(time, isForward, name) {
@@ -201,25 +201,17 @@
         };
         return $scope.setKeyFrame = function(time) {
           var frame, property, runInterpolationWalk, _i, _len, _ref;
-          $scope.time = parseInt(time);
-          frame = $scope.frames[$scope.time];
-          frame.keys[$scope.selectedObject.name] = true;
-          _ref = $scope.keyframedProperties;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            property = _ref[_i];
-            $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property];
-          }
           runInterpolationWalk = function(scope_time, isForward) {
-            var TIME_BOUND, TIME_STEP, frameRunner, frameSteps, getFrameSteps, name, nextTime, prevFrameRunner, rv, _results;
+            var TIME_BOUND, TIME_STEP, frameRunner, frameSteps, getFrameSteps, name, nextTime, prevFrameRunner, property, rv, _results;
             TIME_STEP = isForward ? 1 : -1;
             TIME_BOUND = isForward ? MAX_ANIMATION_TIME : 0;
             getFrameSteps = function(time, targetFrame) {
-              var frameSteps, timeDiff, _j, _len1, _ref1;
+              var frameSteps, property, timeDiff, _i, _len, _ref;
               frameSteps = {};
               timeDiff = scope_time - time;
-              _ref1 = $scope.keyframedProperties;
-              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                property = _ref1[_j];
+              _ref = $scope.keyframedProperties;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                property = _ref[_i];
                 frameSteps[property] = ($scope.selectedObject[property] - targetFrame[property]) / timeDiff;
                 if (isForward) {
                   frameSteps[property] *= -1;
@@ -240,11 +232,11 @@
                 frameRunner = $scope.frames[nextTime];
                 prevFrameRunner = $scope.frames[nextTime + TIME_STEP];
                 _results.push((function() {
-                  var _j, _len1, _ref1, _results1;
-                  _ref1 = $scope.keyframedProperties;
+                  var _i, _len, _ref, _results1;
+                  _ref = $scope.keyframedProperties;
                   _results1 = [];
-                  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                    property = _ref1[_j];
+                  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    property = _ref[_i];
                     name = $scope.selectedObject.name;
                     rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property]);
                     _results1.push($scope.setPropertyAtFrame(property, nextTime, rv.toFixed(3)));
@@ -255,14 +247,21 @@
               return _results;
             }
           };
-          if ($scope.time > $scope.timeStart) {
-            runInterpolationWalk($scope.time, false);
+          frame = $scope.frames[time];
+          frame.keys[$scope.selectedObject.name] = true;
+          _ref = $scope.keyframedProperties;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            property = _ref[_i];
+            $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property];
+          }
+          if (time > $scope.timeStart) {
+            runInterpolationWalk(time, false);
             console.log($scope.frames);
           }
-          if ($scope.selectedObject.furthestFrameTime < $scope.time) {
-            return $scope.selectedObject.furthestFrameTime = $scope.time;
+          if ($scope.selectedObject.furthestFrameTime < time) {
+            return $scope.selectedObject.furthestFrameTime = time;
           } else {
-            runInterpolationWalk($scope.time, true);
+            runInterpolationWalk(time, true);
             return console.log($scope.frames);
           }
         };

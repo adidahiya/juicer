@@ -130,7 +130,7 @@ define (require) ->
         unless $scope.selectedObject?
           $scope.error = "No object selected to keyframe."
           return
-        $scope.setKeyFrame($scope.time)
+        $scope.setKeyFrame(parseInt($scope.time))
 
       $scope.removeKeyframe = () ->
         $scope.time = parseInt($scope.time)
@@ -144,11 +144,11 @@ define (require) ->
           # neighbor not found
           backTime = $scope.findNextFrameTime($scope.time, false, $scope.selectedObject.name)
           if backTime isnt 0
-            $scope.setKeyFrame(backTime)
+            $scope.setKeyFrame(parseInt(backTime))
           else
             $scope.fill 0, MAX_ANIMATION_TIME, 1
         else
-            $scope.setKeyFrame(forwardTime)
+            $scope.setKeyFrame(parseInt(forwardTime))
 
       $scope.findNextFrameTime = (time, isForward, name) ->
         TIME_STEP  = if isForward then 1 else -1
@@ -168,12 +168,6 @@ define (require) ->
         $scope.setObjectAtFrame start, $scope.selectedObject
 
       $scope.setKeyFrame = (time) ->
-        $scope.time = parseInt(time)
-        frame = $scope.frames[$scope.time]
-        frame.keys[$scope.selectedObject.name] = true
-
-        for property in $scope.keyframedProperties
-          $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property]
 
         runInterpolationWalk = (scope_time, isForward) ->
           TIME_STEP  = if isForward then 1 else -1
@@ -208,17 +202,23 @@ define (require) ->
                 rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property])
                 $scope.setPropertyAtFrame property, nextTime, rv.toFixed(3)
 
+        frame = $scope.frames[time]
+        frame.keys[$scope.selectedObject.name] = true
+
+        for property in $scope.keyframedProperties
+          $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property]
+
         # Walk backwards to interpolate values
-        if $scope.time > $scope.timeStart
-          runInterpolationWalk($scope.time, false)
+        if time > $scope.timeStart
+          runInterpolationWalk(time, false)
           console.log $scope.frames
 
         # Update furthestFrameTime for this object
-        if $scope.selectedObject.furthestFrameTime < $scope.time
-          $scope.selectedObject.furthestFrameTime = $scope.time
+        if $scope.selectedObject.furthestFrameTime < time
+          $scope.selectedObject.furthestFrameTime = time
         else
           # Walk forwards to interpolate values, too
-          runInterpolationWalk($scope.time, true)
+          runInterpolationWalk(time, true)
           console.log $scope.frames
 
     # Initializes the controller
