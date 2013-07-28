@@ -171,7 +171,7 @@ define (require) ->
           $scope.selectObject newObject
           $scope.newObjectName = null
           for i in [$scope.timeStart...$scope.timeEnd]
-            $scope.frames[i].interpolatedValues[newObject.name] = _.clone(newObject)
+            $scope.frames[i].bindData(newObject.name, newObject)
 
       $scope.selectObject = (object) ->
         $scope.selectedObject = object
@@ -185,22 +185,24 @@ define (require) ->
           keys: {}
           # obj properties interpolated for point in time
           interpolatedValues: {}
+          bindData: (name, object) ->
+            @interpolatedValues[name] = _.clone(object)
+          getData: (name) ->
+            @interpolatedValues[name]
 
       # Initialize camera frames
-      for i in [$scope.timeStart..$scope.timeEnd-1]
-        $scope.frames[i].interpolatedValues[$scope.camera.name] = \
-          _.clone($scope.camera)
+      for i in [$scope.timeStart...$scope.timeEnd]
+        $scope.frames[i].bindData($scope.camera.name, $scope.camera)
 
       # Look up interpolated values to show animated steps
       $scope.scrubberChange = () ->
         for object in $scope.objects
-          objectValues = \
-            $scope.frames[$scope.time].interpolatedValues[object.name]
+          objectValues = $scope.frames[$scope.time].getData(object.name)
           for prop in $scope.properties()
             object[prop] = parseFloat(objectValues[prop])
 
       $scope.setPropertyAtTime = (property, time, val) ->
-        $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
+        $scope.frames[time].getData($scope.selectedObject.name)[property] = val
 
       $scope.setObjectAtTime = (time, object) ->
         for property in $scope.properties()
@@ -212,17 +214,17 @@ define (require) ->
           return
         $scope.setKeyFrame(parseInt($scope.time))
 
-      $scope.removeKeyframe = () ->
-        $scope.time = parseInt($scope.time)
-        frame = $scope.frames[$scope.time]
+      $scope.removeKeyframe = (frames, time, name) ->
+        time = parseInt(time)
+        frame = frames[time]
         # Clear key frame
-        delete frame.keys[$scope.selectedObject.name]
+        delete frame.keys[name]
 
         # Re-interpolate neighbors
-        forwardTime = $scope.findKeyFrame($scope.time, true, $scope.selectedObject.name, $scope.frames)
+        forwardTime = $scope.findKeyFrame(time, $scope.timeEnd, 1, name, frames)
         if forwardTime is $scope.timeEnd
           # neighbor not found
-          backTime = $scope.findKeyFrame($scope.time, false, $scope.selectedObject.name, $scope.frames)
+          backTime = $scope.findKeyFrame(time, $scope.timeStart, -1, name, frames)
           if backTime is $scope.timeStart
             $scope.fill $scope.timeStart, $scope.timeEnd, 1
           else
@@ -251,8 +253,8 @@ define (require) ->
             dT = timeEnd - timeStart
             difference[property] = parseFloat(dProp / dT)
           return difference
-        objectStart = frames[timeStart].interpolatedValues[name]
-        objectEnd = frames[timeEnd].interpolatedValues[name]
+        objectStart = frames[timeStart].getData(name)
+        objectEnd = frames[timeEnd].getData(name)
         objectDifference = getDifference(objectStart, objectEnd)
 
         t = 0
