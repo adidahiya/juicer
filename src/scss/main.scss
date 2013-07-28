@@ -112,17 +112,28 @@ html, body, .juicer-controller {
 
 .objects {
   border-top: solid 1px $lightGray;
+  border-left: solid 1px $lightGray;
+  height: 100%;
 }
 
+.timeline-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 100%;
+}
+
+$timelineWidth: 302 * 25px;
+$tickWidth: 25px;
+
 .timeline {
-  border: solid 1px $lightGray;
   position: relative;
+  height: 100%;
 
   input[type=range] {
     -webkit-appearance: none;
     position: absolute;
-    width: 100%;
-    height: 100px;
+    width: $timelineWidth - 25px;
+    height: 150px;
     outline: none;
     background: transparent;
   }
@@ -131,16 +142,17 @@ html, body, .juicer-controller {
     -webkit-appearance: none;
     background-color: $gray;
     width: 1px;
-    height: 100px;
+    height: 150px;
   }
 
   .scale {
-    border-bottom: solid 1px $lightGray;
+    width: $timelineWidth;
+    border: solid 1px $lightGray;
     font-size: 10px;
 
     .tick {
       display: inline-block;
-      width: 2%;
+      width: $tickWidth;
       padding: 2px;
       border-left: solid 1px #DDD;
 
@@ -153,32 +165,32 @@ html, body, .juicer-controller {
 }
 
 .selected {
-     color: green;
+  color: green;
 }
 
 .keyframes {
-     width: 100%;
-     height: 100px;
+  width: $timelineWidth;
+  height: 100%;
 
-     .tick {
-      display: inline-block;
-      width: 2%;
-      height: 20px;
-      padding: 2px;
-      border-left: solid 1px #DDD;
+  .tick {
+    display: inline-block;
+    width: $tickWidth;
+    height: 20px;
+    padding: 2px;
+    border-left: solid 1px #DDD;
 
-      &.active {
-        background: $lightGray;
-        border-color: $gray;
-      }
-     }
+    &.active {
+      background: $lightGray;
+      border-color: $gray;
+    }
+  }
 }
 
 .object {
-     img {
-          height: 100%;
-          width: 100%;
-     }
+  img {
+    height: 100%;
+    width: 100%;
+  }
 }
 
 #camera-view {
