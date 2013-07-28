@@ -12,9 +12,8 @@
     outline: none; }
   .timeline input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background-color: #CCC;
-    opacity: 0.8;
-    width: 2px;
+    background-color: #888;
+    width: 1px;
     height: 100px; }
   .timeline .scale {
     border-bottom: solid 1px #CCC;
@@ -24,3 +23,6 @@
       width: 2%;
       padding: 2px;
       border-left: solid 1px #DDD; }
+      .timeline .scale .tick.active {
+        background: #CCC;
+        border-color: #888; }

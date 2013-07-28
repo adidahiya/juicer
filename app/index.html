@@ -11,10 +11,10 @@
   <h1>Juicer</h1>
 
   <div class="juicer-controller" ng-controller="JuicerController">
-    Time: {{time}}
     <div class="timeline">
       <div class="scale">
-        <div class="tick" ng-repeat="tick in visibleTicks">
+        <div class="tick" ng-repeat="tick in visibleTicks"
+          ng-class="{active: tick.value == time}">
           {{tick.value}}
         </div>
       </div>
