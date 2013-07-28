@@ -21,6 +21,18 @@ define (require) ->
         for i in [$scope.timeStart..$scope.timeEnd]
           value: i
 
+      $scope.layers = []
+      $scope.selectedLayer = null
+
+      $scope.addLayer = ->
+        if $scope.layer?
+          $scope.layers.push {name: $scope.layer}
+          $scope.selectedLayer = layer
+          $scope.layer = null
+
+      $scope.selectLayer = ->
+        $scope.selectedLayer = null
+
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']
 
