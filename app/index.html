@@ -25,7 +25,7 @@
           <div class="object" ng-repeat="object in objects"
             ng-class="{selected: isObjectSelected(object)}"
             ng-style="getObjectStyle(object)">
-            <img ng-src="object.src"/>
+            <img ng-src="{{object.src}}"/>
           </div>
         </render-window>
       </div>
