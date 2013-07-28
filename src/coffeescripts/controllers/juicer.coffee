@@ -7,6 +7,7 @@ define (require) ->
   DEBUG               = false
   DEFAULT_ZOOM_LEVEL  = 50
   SCENE_TOP_PADDING   = 35
+  DEFAULT_IMAGE_SIZE  = 100
 
   initAppModule = () ->
 
@@ -137,15 +138,17 @@ define (require) ->
         width:  $scope.currentScale * object.width
         height: $scope.currentScale * object.height
 
+      $scope.getObjectNames = -> _.pluck $scope.objects, 'name'
+
       $scope.addObject = ->
-        if $scope.newObjectName? and $scope.newObjectSrc?
+        if $scope.newObjectName? and not ($scope.newObjectName in $scope.getObjectNames()) and $scope.newObjectSrc?
           newObject =
             name: $scope.newObjectName
             src: $scope.newObjectSrc
-            width: 100
-            height: 100
-            x: -50
-            y: -50
+            width: DEFAULT_IMAGE_SIZE
+            height: DEFAULT_IMAGE_SIZE
+            x: -(DEFAULT_IMAGE_SIZE / 2)
+            y: -(DEFAULT_IMAGE_SIZE / 2)
           $scope.objects.push newObject
           $scope.selectObject newObject
           $scope.newObjectName = null
