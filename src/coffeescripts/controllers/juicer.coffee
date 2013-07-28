@@ -21,6 +21,23 @@ define (require) ->
         $scope.xOffset = $scope.rendererWidth / 2
         $scope.yOffset = $scope.rendererHeight / 2
 
+        $element.mousedown (event) ->
+          $scope.$apply () ->
+            $scope.pan.isActive = true
+            $scope.pan.xStart = event.pageX
+            $scope.pan.yStart = event.pageY
+
+        onMousemove = (event) =>
+          if $scope.pan.isActive
+            $scope.$apply () ->
+              $scope.xOffset += (event.pageX - $scope.pan.xStart) / 20
+              $scope.yOffset += (event.pageY - $scope.pan.yStart) / 20
+              $scope.scrubberChange()
+
+        $element.mousemove onMousemove
+
+        $element.mouseup (event) => $scope.pan.isActive = false
+        $element.mouseleave (event) => $scope.pan.isActive = false
 
     window.JuicerController = ($scope, $timeout) ->
 
