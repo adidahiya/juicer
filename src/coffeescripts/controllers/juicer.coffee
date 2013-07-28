@@ -94,9 +94,10 @@ define (require) ->
         height: $scope.currentScale * object.height
 
       $scope.addObject = ->
-        if $scope.newObjectName?
+        if $scope.newObjectName? and $scope.newObjectSrc?
           newObject =
             name: $scope.newObjectName
+            src: $scope.newObjectSrc
             width: 10
             height: 10
             x: 10
