@@ -4,6 +4,8 @@ define (require) ->
   $         = require 'jquery'
   angular   = require 'angular'
 
+  require 'filer'
+
   DEBUG               = false
   DEFAULT_ZOOM_LEVEL  = 50
   SCENE_TOP_PADDING   = 35
@@ -61,7 +63,23 @@ define (require) ->
             height: $('#camera-view').height()
           images: images
           frames: frames
-        console.log (JSON.stringify data)
+
+        filer = new Filer()
+        filer.init
+          persistent: true
+        , (fs) =>
+          filer.ls '/', (entries) -> console.log entries
+          filer.ls '.', (entries) -> console.log entries
+          filer.write 'juiceAnimation.json',
+            data: JSON.stringify(data)
+            type: 'text/json'
+            append: false
+          , (fileEntry, fileWriter) =>
+            console.log 'success', fileEntry, fileWriter
+          , (error) =>
+            console.log 'error', error
+        , (error) =>
+          console.log "unable to write to file system: ", error
 
       # Scene navigation
       # ----------------------------------------------------------------------
