@@ -13,7 +13,7 @@ define (require) ->
 
     appModule = angular.module 'juicer', []
 
-    appModule.directive "renderWindow", () ->
+    appModule.directive 'renderWindow', () ->
       restrict: 'E'
       link: ($scope, $element, attrs) ->
         $scope.rendererWidth  = parseInt $element.width()
