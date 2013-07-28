@@ -98,10 +98,10 @@ define (require) ->
           newObject =
             name: $scope.newObjectName
             src: $scope.newObjectSrc
-            width: 10
-            height: 10
-            x: 10
-            y: 10
+            width: 100
+            height: 100
+            x: -50
+            y: -50
           $scope.objects.push newObject
           $scope.selectObject newObject
           $scope.newObjectName = null
