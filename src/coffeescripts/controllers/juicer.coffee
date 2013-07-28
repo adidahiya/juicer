@@ -54,7 +54,8 @@ define (require) ->
           frame = {}
           for object in $scope.objects[1..]
             renderedProperties = $scope.getObjectStyle(object)
-            xOffset = $scope.camera.xOffset / 2
+            # 600 is camera width (in CSS)
+            xOffset = ($scope.rendererWidth - 600) / 2
             yOffset = 50
             frame[object.name] =
               left:   "#{renderedProperties.left - xOffset}px"
