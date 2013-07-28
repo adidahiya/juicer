@@ -12,11 +12,10 @@
     <div class="pure-g top">
       <div class="properties pure-u-1-4">
         <h3 class="panel-title">Object Properties</h3>
-        <ul ng-show="selectedObject">
-          <li> <span>Width</span>   {{selectedObject.width}}  </li>
-          <li> <span>Height</span>  {{selectedObject.height}} </li>
-          <li> <span>X</span>       {{selectedObject.x}}      </li>
-          <li> <span>Y</span>       {{selectedObject.y}}      </li>
+        <ul>
+            <li ng-repeat="property in keyframedProperties">
+            <span>{{property}}</span><input ng-model="selectedObject[property]" size="10">
+            </li>
         </ul>
         <p ng-hide="selectedObject">
           No object selected.
@@ -60,7 +59,7 @@
           </div>
         </div>
         <input class="scrubber" type="range" ng-model="time"
-          min="{{timeStart}}" max="{{timeEnd + 1}}"/>
+          min="{{timeStart}}" max="{{timeEnd + 1}}" ng-change="scrubberChange()"/>
       </div>
     </div>
 

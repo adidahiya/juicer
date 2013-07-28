@@ -5,12 +5,6 @@ define (require) ->
 
   DEBUG = true
   MAX_ANIMATION_TIME = 300
-  KEYFRAMED_PROPERTIES = [
-    'width'
-    'height'
-    'x'
-    'y'
-  ]
 
   initAppModule = () ->
 
@@ -20,6 +14,12 @@ define (require) ->
     # Initialize directives, etc
 
     window.JuicerController = ($scope) ->
+      $scope.keyframedProperties = [
+        'width'
+        'height'
+        'x'
+        'y'
+      ]
 
       $scope.time = 0
       $scope.timeStart = 0
@@ -43,6 +43,8 @@ define (require) ->
           $scope.objects.push object
           $scope.selectObject object
           $scope.object = null
+          for i in [0..MAX_ANIMATION_TIME]
+            $scope.frames[i].interpolatedValues[object.name] = _.clone(object)
 
       $scope.selectObject = (object) ->
         $scope.selectedObject = object
@@ -52,8 +54,15 @@ define (require) ->
 
       $scope.frames =
         for i in [0..MAX_ANIMATION_TIME]
+          # obj_name -> True if keyframe is at that time
           keys: {}
+          # obj properties interpolated for point in time
           interpolatedValues: {}
+
+      $scope.scrubberChange = () ->
+        if $scope.selectedObject?
+          for property in $scope.keyframedProperties
+            $scope.selectedObject[property] = $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property]
 
       $scope.addKeyframe = () ->
         unless $scope.selectedObject?
@@ -63,6 +72,9 @@ define (require) ->
         $scope.time = parseInt($scope.time)
         frame = $scope.frames[$scope.time]
         frame.keys[$scope.selectedObject.name] = true
+
+        for property in $scope.keyframedProperties
+          $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property]
 
         runInterpolationWalk = (isForward) ->
           timeStep  = if isForward then 1 else -1
@@ -84,7 +96,7 @@ define (require) ->
             # Calculate interpolation step between targetFrame and current
             frameSteps = {}
             timeDiff = $scope.time - time
-            for key in KEYFRAMED_PROPERTIES
+            for key in $scope.keyframedProperties
               frameSteps[key] = $scope.selectedObject[key] - prevKeyframe[key]
               # Invert if going forward
               if isForward
@@ -94,7 +106,7 @@ define (require) ->
               time -= timeStep
               frameRunner     = $scope.frames[time]
               prevFrameRunner = $scope.frames[time + timeStep]
-              for key in KEYFRAMED_PROPERTIES
+              for key in $scope.keyframedProperties
                 frameRunner.interpolatedValues[key] =
                   prevFrameRunner.interpolatedValues[key] + frameSteps[key]
 
