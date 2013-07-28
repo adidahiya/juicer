@@ -2,9 +2,10 @@
 (function() {
 
   define(function(require) {
-    var DEBUG, angular, initAppModule, _;
+    var DEBUG, angular, angularUI, initAppModule, _;
     _ = require('underscore');
     angular = require('angular');
+    angularUI = require('angularUI');
     DEBUG = true;
     initAppModule = function() {
       var appModule;

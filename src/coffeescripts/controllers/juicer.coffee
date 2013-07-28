@@ -2,6 +2,7 @@ define (require) ->
 
   _         = require 'underscore'
   angular   = require 'angular'
+  angularUI = require 'angularUI'
 
   DEBUG = true
 
