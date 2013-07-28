@@ -187,7 +187,8 @@ input[type=button], input[type=submit] {
   ul {
     margin-bottom: 5px;
     li {
-      padding: 5px;
+      font-size: 12px;
+      padding: 3px;
       border-bottom: solid 1px $lighterGray;
       cursor: pointer;
       &:hover {
@@ -243,11 +244,11 @@ $tickWidth: 25px;
     width: $timelineWidth;
     border: solid 1px $lightGray;
     font-size: 10px;
+    margin-top: 22px;
 
     .tick {
       display: inline-block;
       width: $tickWidth;
-      padding: 2px;
       border-left: solid 1px #DDD;
 
       &.active {
@@ -255,6 +256,10 @@ $tickWidth: 25px;
         border-color: $gray;
       }
     }
+  }
+
+  .tickrow {
+    height: 22px;
   }
 }
 

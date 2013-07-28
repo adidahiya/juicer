@@ -104,6 +104,7 @@ define (require) ->
       $scope.reset = () ->
         $scope.camera.xOffset = $scope.rendererWidth / 2
         $scope.camera.yOffset = $scope.rendererHeight / 2
+        $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
         $scope.currentScale = 1
 
       # Timeline
@@ -133,9 +134,7 @@ define (require) ->
         if didPause
           $scope.play()
 
-      $scope.visibleTicks =
-        for i in [$scope.timeStart...$scope.timeEnd]
-          value: i
+      $scope.visibleTicks = [$scope.timeStart...$scope.timeEnd]
 
       # Scene objects
       # ----------------------------------------------------------------------
