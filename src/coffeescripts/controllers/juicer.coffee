@@ -68,9 +68,9 @@ define (require) ->
               width:    "#{renderedProperties.width}px"
               height:   "#{renderedProperties.height}px"
             # Copy over rest of properties (don't need "px" suffix)
-            _.extend frame[object.name], renderedProperties.omit [
+            _.extend frame[object.name], _.omit(renderedProperties, [
               "left", "top", "width", "height"
-            ]
+            ])
           frames.push frame
 
         data =
