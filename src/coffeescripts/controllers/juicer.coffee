@@ -143,7 +143,7 @@ define (require) ->
           interpolatedValues: {}
 
       # Initialize camera frames
-      for i in [$scope.timeStart..$scope.timeEnd]
+      for i in [$scope.timeStart..$scope.timeEnd-1]
         $scope.frames[i].interpolatedValues[$scope.camera.name] = \
           _.clone($scope.camera)
 
