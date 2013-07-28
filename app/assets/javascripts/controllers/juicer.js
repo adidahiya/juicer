@@ -17,10 +17,7 @@
     return {
       init: function() {
         initAppModule();
-        return angular.element(document).ready(function() {
-          angular.bootstrap(document, ['juicer']);
-          debugger;
-        });
+        return angular.bootstrap(document, ['juicer']);
       }
     };
   });

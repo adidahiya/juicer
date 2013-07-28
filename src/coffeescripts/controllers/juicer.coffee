@@ -25,8 +25,5 @@ define (require) ->
 
   init: ->
     initAppModule()
-
-    angular.element(document).ready () ->
-      angular.bootstrap document, ['juicer']
-      debugger
+    angular.bootstrap document, ['juicer']
 
