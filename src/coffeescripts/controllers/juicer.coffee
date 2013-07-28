@@ -213,7 +213,7 @@ define (require) ->
               object[prop] = parseFloat(objectValues[prop])
 
       $scope.setPropertyAtTime = (property, time, val) ->
-        $scope.frames[time].getData($scope.selectedObject.name)[property] = val
+        $scope.frames[time]?.getData($scope.selectedObject.name)[property] = val
 
       $scope.setObjectAtTime = (time, object) ->
         for property in $scope.properties()
@@ -245,7 +245,7 @@ define (require) ->
 
       $scope.findKeyFrame = (timeStart, timeEnd, timeStep, name, frames) ->
         until timeStart is timeEnd
-          if frames[timeStart].keys[name]?
+          if frames[timeStart]?.keys[name]?
             break
           timeStart += timeStep
         return timeStart
