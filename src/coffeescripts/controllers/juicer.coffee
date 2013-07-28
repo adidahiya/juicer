@@ -58,10 +58,14 @@ define (require) ->
             xOffset = ($scope.rendererWidth - 600) / 2
             yOffset = 50
             frame[object.name] =
-              left:   "#{renderedProperties.left - xOffset}px"
-              top:    "#{renderedProperties.top - yOffset}px"
-              width:  "#{renderedProperties.width}px"
-              height: "#{renderedProperties.height}px"
+              left:     "#{renderedProperties.left - xOffset}px"
+              top:      "#{renderedProperties.top - yOffset}px"
+              width:    "#{renderedProperties.width}px"
+              height:   "#{renderedProperties.height}px"
+            # Copy over rest of properties (don't need "px" suffix)
+            _.extend frame[object.name], renderedProperties.omit [
+              "left", "top", "width", "height"
+            ]
           frames.push frame
 
         data =
