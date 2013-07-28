@@ -30,7 +30,7 @@ html, body, .juicer-controller {
 
 .scene {
   height: 100%;
-  border-left: solid 1px #cccccc; }
+  border-right: solid 1px #cccccc; }
   .scene .scene-controls {
     float: right;
     margin-top: -33px; }
@@ -52,6 +52,11 @@ html, body, .juicer-controller {
       background-color: #888888;
       width: 1px;
       height: 33px; }
+  .scene .scene-objects .object {
+    position: absolute;
+    background: #888888; }
+    .scene .scene-objects .object.selected {
+      background: black; }
 
 .pure-g.bottom {
   height: 25%; }

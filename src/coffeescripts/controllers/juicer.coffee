@@ -11,13 +11,44 @@ define (require) ->
 
     appModule = angular.module 'juicer', []
 
-    # Get services from factories
-    # Initialize directives, etc
+    appModule.directive "renderWindow", () ->
+      restrict: 'A'
+      link: ($scope, $element, attrs) ->
+        $scope.rendererWidth = $element.width()
+        $scope.rendererHeight = $element.height()
+
+    appModule.directive "renderedObject", () ->
+      restrict: 'E'
+      link: ($scope, $element, attrs) ->
+        render = () ->
+          $element.css
+            left:   $scope.object.x * $scope.currentScale + $scope.xOffset
+            top:    $scope.object.y * $scope.currentScale + $scope.yOffset
+            width:  $scope.object.width * $scope.currentScale
+            height: $scope.object.height * $scope.currentScale
+
+        $scope.$watch "currentScale", render
+        $scope.$watch "xOffset", render
+        $scope.$watch "yOffset", render
 
     window.JuicerController = ($scope) ->
 
       # Scene
       $scope.zoomLevel = 0
+      # TODO: make not static
+      $scope.xOffset = 300
+      $scope.yOffset = 200
+      $scope.currentScale = 1
+
+      $scope.rescale = (scale) ->
+        halfWidth   = $scope.rendererWidth / 2
+        halfHeight  = $scope.rendererHeight / 2
+
+        xCenter = ($scope.xOffset - halfWidth) * scale
+        yCenter = ($scope.yOffset - halfHeight) * scale
+        $scope.xOffset = xCenter + halfWidth
+        $scope.yOffset = yCenter + halfHeight
+        $scope.currentScale *= scale
 
       # Timeline
       $scope.keyframedProperties = [

@@ -10,11 +10,27 @@
 
   <div class="juicer-controller" ng-controller="JuicerController">
     <div class="pure-g top">
+      <div class="scene pure-u-3-4" render-window>
+        <h3 class="panel-title">Scene</h3>
+        <div class="scene-controls">
+          <input type="button" ng-click="rescale(0.5)" value="0.5x">
+          <input type="button" ng-click="rescale(2)" value="2x">
+          <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
+          <span>Zoom: {{zoomLevel}}</span>
+        </div>
+        <div class="scene-objects">
+          <rendered-object class="object" ng-repeat="object in objects"
+            ng-class="{selected: isObjectSelected(object)}">
+          </rendered-object>
+        </div>
+      </div>
+
       <div class="properties pure-u-1-4">
         <h3 class="panel-title">Object Properties</h3>
         <ul>
             <li ng-repeat="property in keyframedProperties">
-            <span>{{property}}</span><input ng-model="selectedObject[property]" size="10">
+              <span>{{property}}</span>
+              <input type="number" ng-model="selectedObject[property]" size="10">
             </li>
         </ul>
         <p ng-hide="selectedObject">
@@ -27,22 +43,20 @@
           <input type="submit" value="Remove keyframe">
         </form>
       </div>
-      <div class="scene pure-u-3-4">
-        <h3 class="panel-title">Scene</h3>
-        <div class="scene-controls">
-          <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
-          <span>Zoom: {{zoomLevel}}</span>
-        </div>
-        <div class="scene-objects">
-          <div class="object" ng-repeat="object in objects"
-            ng-class="{selected: isObjectSelected(object)}">
-            <span>{{object.name}}</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="pure-g bottom">
+      <div class="timeline pure-u-3-4">
+        <div class="scale">
+          <div class="tick" ng-repeat="tick in visibleTicks"
+            ng-class="{active: tick.value == time}">
+            {{tick.value}}
+          </div>
+        </div>
+        <input class="scrubber" type="range" ng-model="time"
+          min="{{timeStart}}" max="{{timeEnd + 1}}" ng-change="scrubberChange()"/>
+      </div>
+
       <div class="objects pure-u-1-4">
         <h3 class="panel-title">Objects</h3>
         <ul>
@@ -55,17 +69,6 @@
           <input type="text" ng-model="object">
           <input type="submit" value="add">
         </form>
-      </div>
-      
-      <div class="timeline pure-u-3-4">
-        <div class="scale">
-          <div class="tick" ng-repeat="tick in visibleTicks"
-            ng-class="{active: tick.value == time}">
-            {{tick.value}}
-          </div>
-        </div>
-        <input class="scrubber" type="range" ng-model="time"
-          min="{{timeStart}}" max="{{timeEnd + 1}}" ng-change="scrubberChange()"/>
       </div>
     </div>
 
