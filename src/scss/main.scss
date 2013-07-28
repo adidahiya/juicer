@@ -5,7 +5,7 @@ $lightGray: #CCC;
 $gray: #888;
 
 $lightBlue: #3498db;
-$blue: darken($lightBlue, 15%);
+$blue: darken($lightBlue, 10%);
 
 $titleHeight: 33px;
 
@@ -77,6 +77,11 @@ input[type=button], input[type=submit] {
         display: inline-block;
         width: 30%;
       }
+
+      input {
+        border: solid 1px $lightGray;
+        padding: 4px;
+      }
     }
   }
 
@@ -129,9 +134,8 @@ input[type=button], input[type=submit] {
     }
 
     input[type=range] {
-      float: right;
       -webkit-appearance: none;
-      background-color: lighten($lightGray, 10%);
+      background-color: white;
       width: 100px;
       height: $titleHeight;
       border-left: solid 1px $lightGray;
