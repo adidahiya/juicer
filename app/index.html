@@ -11,8 +11,17 @@
   <h1>Juicer</h1>
 
   <div class="juicer-controller" ng-controller="JuicerController">
-    <input type="text" ng-model="name" placeholder="Enter name..." />
-    <p>Hello {{name}}</p>
+    Time: {{time}}
+    <div class="timeline">
+      <div class="scale">
+        <div class="tick" ng-repeat="tick in visibleTicks">
+          {{tick.value}}
+        </div>
+      </div>
+      <input class="scrubber" type="range" ng-model="time"
+        min="{{timeStart}}" max="{{timeEnd + 1}}"/>
+    </div>
+
   </div> <!-- END juicer-controller -->
 
   <!--[if lt ie 8]>

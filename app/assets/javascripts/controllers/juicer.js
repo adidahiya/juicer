@@ -10,7 +10,19 @@
       var appModule;
       appModule = angular.module('juicer', []);
       window.JuicerController = function($scope) {
-        return $scope.foo = 5;
+        var i;
+        $scope.timeStart = 0;
+        $scope.timeEnd = 49;
+        return $scope.visibleTicks = (function() {
+          var _i, _ref, _ref1, _results;
+          _results = [];
+          for (i = _i = _ref = $scope.timeStart, _ref1 = $scope.timeEnd; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = _ref <= _ref1 ? ++_i : --_i) {
+            _results.push({
+              value: i
+            });
+          }
+          return _results;
+        })();
       };
       return window.JuicerController.$inject = ['$scope'];
     };

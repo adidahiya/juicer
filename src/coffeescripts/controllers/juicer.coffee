@@ -14,7 +14,12 @@ define (require) ->
 
     window.JuicerController = ($scope) ->
 
-      $scope.foo = 5
+      $scope.timeStart = 0
+      $scope.timeEnd = 49
+
+      $scope.visibleTicks =
+        for i in [$scope.timeStart..$scope.timeEnd]
+          value: i
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']
