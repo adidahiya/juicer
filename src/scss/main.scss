@@ -3,6 +3,8 @@
 $lightGray: #CCC;
 $gray: #888;
 
+$titleHeight: 33px;
+
 // Globals
 // ---------------------------------------------------------------------------
 * {
@@ -55,11 +57,14 @@ html, body, .juicer-controller {
 
   .scene-controls {
     float: right;
-    margin-top: -33px;
+    margin-top: -$titleHeight;
+
+    > span, > input {
+      float: right;
+    }
 
     > span {
       display: inline-block;
-      float: right;
       padding: 7px;
     }
 
@@ -68,7 +73,7 @@ html, body, .juicer-controller {
       -webkit-appearance: none;
       background-color: lighten($lightGray, 10%);
       width: 100px;
-      height: 33px;
+      height: $titleHeight;
       border-left: solid 1px $lightGray;
       border-bottom: solid 1px $lightGray;
       outline: none;
@@ -78,11 +83,14 @@ html, body, .juicer-controller {
       -webkit-appearance: none;
       background-color: $gray;
       width: 1px;
-      height: 33px;
+      height: $titleHeight;
     }
   }
 
   .scene-objects {
+    width: 100%;
+    height: calc(100% - 33px);
+
     .object {
       position: absolute;
       background: $gray;

@@ -12,7 +12,7 @@ define (require) ->
     appModule = angular.module 'juicer', []
 
     appModule.directive "renderWindow", () ->
-      restrict: 'A'
+      restrict: 'E'
       link: ($scope, $element, attrs) ->
         $scope.rendererWidth = $element.width()
         $scope.rendererHeight = $element.height()
@@ -27,11 +27,15 @@ define (require) ->
             width:  $scope.object.width * $scope.currentScale
             height: $scope.object.height * $scope.currentScale
 
+        $scope.$watch "object.x", render
+        $scope.$watch "object.y", render
+        $scope.$watch "object.width", render
+        $scope.$watch "object.height", render
         $scope.$watch "currentScale", render
         $scope.$watch "xOffset", render
         $scope.$watch "yOffset", render
 
-    window.JuicerController = ($scope) ->
+    window.JuicerController = ($scope, $timeout) ->
 
       # Scene
       $scope.zoomLevel = 0
@@ -60,6 +64,19 @@ define (require) ->
       $scope.time = 0
       $scope.timeStart = 0
       $scope.timeEnd = 49
+      $scope.playSpeed = 200
+
+      $scope.playInterval = null
+      $scope.isPaused = true
+      $scope.play = () ->
+        $scope.isPaused = false
+        stopInterval = $timeout(`function incTime() {
+          $scope.time = ($scope.time + 1) % $scope.timeEnd;
+          $scope.playInterval = $timeout(incTime, $scope.playSpeed);
+        }`, $scope.playSpeed)
+      $scope.pause = () ->
+        $scope.isPaused = true
+        $timeout.cancel $scope.playInterval
 
       $scope.visibleTicks =
         for i in [$scope.timeStart..$scope.timeEnd]
@@ -170,7 +187,7 @@ define (require) ->
         delete frame.keys[$scope.selectedObject.name]
 
     # Initializes the controller
-    window.JuicerController.$inject = ['$scope']
+    window.JuicerController.$inject = ['$scope', '$timeout']
 
 
   # Public API

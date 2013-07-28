@@ -2,5 +2,7 @@
 *.vim
 *.swp
 .DS_Store
+app/assets/javascripts/*.js
+app/assets/css/*.css
 
 .sass-cache

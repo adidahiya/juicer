@@ -13,7 +13,7 @@
       appModule = angular.module('juicer', []);
       appModule.directive("renderWindow", function() {
         return {
-          restrict: 'A',
+          restrict: 'E',
           link: function($scope, $element, attrs) {
             $scope.rendererWidth = $element.width();
             return $scope.rendererHeight = $element.height();
@@ -33,13 +33,17 @@
                 height: $scope.object.height * $scope.currentScale
               });
             };
+            $scope.$watch("object.x", render);
+            $scope.$watch("object.y", render);
+            $scope.$watch("object.width", render);
+            $scope.$watch("object.height", render);
             $scope.$watch("currentScale", render);
             $scope.$watch("xOffset", render);
             return $scope.$watch("yOffset", render);
           }
         };
       });
-      window.JuicerController = function($scope) {
+      window.JuicerController = function($scope, $timeout) {
         var i;
         $scope.zoomLevel = 0;
         $scope.xOffset = 300;
@@ -55,10 +59,28 @@
           $scope.yOffset = yCenter + halfHeight;
           return $scope.currentScale *= scale;
         };
+        $scope.pan = {
+          isActive: false
+        };
         $scope.keyframedProperties = ['width', 'height', 'x', 'y'];
         $scope.time = 0;
         $scope.timeStart = 0;
         $scope.timeEnd = 49;
+        $scope.playSpeed = 200;
+        $scope.playInterval = null;
+        $scope.isPaused = true;
+        $scope.play = function() {
+          var stopInterval;
+          $scope.isPaused = false;
+          return stopInterval = $timeout(function incTime() {
+          $scope.time = ($scope.time + 1) % $scope.timeEnd;
+          $scope.playInterval = $timeout(incTime, $scope.playSpeed);
+        }, $scope.playSpeed);
+        };
+        $scope.pause = function() {
+          $scope.isPaused = true;
+          return $timeout.cancel($scope.playInterval);
+        };
         $scope.visibleTicks = (function() {
           var _i, _ref, _ref1, _results;
           _results = [];
@@ -204,7 +226,7 @@
           return delete frame.keys[$scope.selectedObject.name];
         };
       };
-      return window.JuicerController.$inject = ['$scope'];
+      return window.JuicerController.$inject = ['$scope', '$timeout'];
     };
     return {
       init: function() {

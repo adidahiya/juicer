@@ -34,9 +34,10 @@ html, body, .juicer-controller {
   .scene .scene-controls {
     float: right;
     margin-top: -33px; }
+    .scene .scene-controls > span, .scene .scene-controls > input {
+      float: right; }
     .scene .scene-controls > span {
       display: inline-block;
-      float: right;
       padding: 7px; }
     .scene .scene-controls input[type=range] {
       float: right;
@@ -52,11 +53,14 @@ html, body, .juicer-controller {
       background-color: #888888;
       width: 1px;
       height: 33px; }
-  .scene .scene-objects .object {
-    position: absolute;
-    background: #888888; }
-    .scene .scene-objects .object.selected {
-      background: black; }
+  .scene .scene-objects {
+    width: 100%;
+    height: calc(100% - 33px); }
+    .scene .scene-objects .object {
+      position: absolute;
+      background: #888888; }
+      .scene .scene-objects .object.selected {
+        background: black; }
 
 .pure-g.bottom {
   height: 25%; }

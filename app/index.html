@@ -10,24 +10,26 @@
 
   <div class="juicer-controller" ng-controller="JuicerController">
     <div class="pure-g top">
-      <div class="scene pure-u-3-4" render-window>
+      <div class="scene pure-u-3-4">
         <h3 class="panel-title">Scene</h3>
         <div class="scene-controls">
-          <input type="button" ng-click="rescale(0.5)" value="0.5x">
-          <input type="button" ng-click="rescale(2)" value="2x">
           <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
           <span>Zoom: {{zoomLevel}}</span>
+          <input type="button" ng-click="rescale(2)" value="2x">
+          <input type="button" ng-click="rescale(0.5)" value="0.5x">
+          <input type="button" ng-click="play()" ng-show="isPaused" value="&#9654;">
+          <input type="button" ng-click="pause()" ng-hide="isPaused" value="&#9632;">
         </div>
-        <div class="scene-objects">
+        <render-window class="scene-objects">
           <rendered-object class="object" ng-repeat="object in objects"
             ng-class="{selected: isObjectSelected(object)}">
           </rendered-object>
-        </div>
+        </render-window>
       </div>
 
       <div class="properties pure-u-1-4">
         <h3 class="panel-title">Object Properties</h3>
-        <ul>
+        <ul ng-show="selectedObject">
             <li ng-repeat="property in keyframedProperties">
               <span>{{property}}</span>
               <input type="number" ng-model="selectedObject[property]" size="10">
