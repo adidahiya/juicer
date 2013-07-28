@@ -135,12 +135,53 @@
           return _results;
         };
         $scope.addKeyframe = function() {
-          var frame, property, runInterpolationWalk, _i, _len, _ref;
           if ($scope.selectedObject == null) {
             $scope.error = "No object selected to keyframe.";
             return;
           }
+          return $scope.setKeyFrame($scope.time);
+        };
+        $scope.removeKeyframe = function() {
+          var backTime, forwardTime, frame;
           $scope.time = parseInt($scope.time);
+          frame = $scope.frames[$scope.time];
+          delete frame.keys[$scope.selectedObject.name];
+          forwardTime = $scope.findNextFrameTime($scope.time, true);
+          if (forwardTime === MAX_ANIMATION_TIME) {
+            backTime = $scope.findNextFrameTime($scope.time, false);
+            if (backTime !== 0) {
+              return $scope.setKeyFrame(backTime);
+            } else {
+              return $scope.fill(0, MAX_ANIMATION_TIME, 1);
+            }
+          } else {
+            return $scope.setKeyFrame(forwardTime);
+          }
+        };
+        $scope.findNextFrameTime = function(time, isForward) {
+          var TIME_BOUND, TIME_STEP, frameRunner;
+          TIME_STEP = isForward ? 1 : -1;
+          TIME_BOUND = isForward ? MAX_ANIMATION_TIME : 0;
+          frameRunner = $scope.frames[time];
+          while (!frameRunner.keys[$scope.selectedObject.name]) {
+            if (time === TIME_BOUND) {
+              break;
+            }
+            time += TIME_STEP;
+            frameRunner = $scope.frames[time];
+          }
+          return time;
+        };
+        $scope.fill = function(start, end, step) {
+          while (start !== end) {
+            $scope.setObjectAtFrame(start, $scope.selectedObject);
+            start += step;
+          }
+          return $scope.setObjectAtFrame(start, $scope.selectedObject);
+        };
+        return $scope.setKeyFrame = function(time) {
+          var frame, property, runInterpolationWalk, _i, _len, _ref;
+          $scope.time = parseInt(time);
           frame = $scope.frames[$scope.time];
           frame.keys[$scope.selectedObject.name] = true;
           _ref = $scope.keyframedProperties;
@@ -149,7 +190,7 @@
             $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property];
           }
           runInterpolationWalk = function(isForward) {
-            var TIME_BOUND, TIME_STEP, frameRunner, frameSteps, getFrameSteps, hasSeenTargetFrames, name, prevFrameRunner, rv, time, _results;
+            var TIME_BOUND, TIME_STEP, frameRunner, frameSteps, getFrameSteps, name, prevFrameRunner, rv, _results;
             TIME_STEP = isForward ? 1 : -1;
             TIME_BOUND = isForward ? MAX_ANIMATION_TIME : 0;
             getFrameSteps = function(time, targetFrame) {
@@ -168,16 +209,8 @@
             };
             time = $scope.time + TIME_STEP;
             frameRunner = $scope.frames[time];
-            hasSeenTargetFrames = true;
-            while (!frameRunner.keys[$scope.selectedObject.name]) {
-              if (time === TIME_BOUND) {
-                hasSeenTargetFrames = false;
-                break;
-              }
-              time += TIME_STEP;
-              frameRunner = $scope.frames[time];
-            }
-            if (hasSeenTargetFrames) {
+            time = $scope.findNextFrameTime(time, isForward);
+            if (time !== TIME_BOUND) {
               frameSteps = getFrameSteps(time, frameRunner.interpolatedValues[$scope.selectedObject.name]);
               _results = [];
               while (time !== $scope.time) {
@@ -200,12 +233,7 @@
               }
               return _results;
             } else {
-              time = $scope.time;
-              while (time !== TIME_BOUND) {
-                $scope.setObjectAtFrame(time, $scope.selectedObject);
-                time += TIME_STEP;
-              }
-              return $scope.setObjectAtFrame(time, $scope.selectedObject);
+              return $scope.fill($scope.time, TIME_BOUND, TIME_STEP);
             }
           };
           if ($scope.time > $scope.timeStart) {
@@ -216,11 +244,6 @@
           } else {
             return runInterpolationWalk(true);
           }
-        };
-        return $scope.removeKeyframe = function() {
-          var frame;
-          frame = $scope.frames[$scope.time];
-          return delete frame.keys[$scope.selectedObject.name];
         };
       };
       return window.JuicerController.$inject = ['$scope'];
