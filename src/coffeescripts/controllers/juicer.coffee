@@ -44,16 +44,21 @@ define (require) ->
     window.JuicerController = ($scope, $timeout) ->
 
       $scope.download = () ->
-        images = _.map $scope.objects[1..], (obj) ->
-          _.pick obj, 'name'
+        images = {}
+        for object in $scope.objects[1..]
+          images[object.name] = object.src
         frames = []
         for t in [$scope.timeStart...$scope.timeEnd]
+          $scope.time = t
+          $scope.scrubberChange()
           frame = {}
           for object in $scope.objects[1..]
             renderedProperties = $scope.getObjectStyle(object)
+            xOffset = $scope.camera.xOffset / 2
+            yOffset = 50
             frame[object.name] =
-              left:   "#{renderedProperties.left - $scope.camera.xOffset}px"
-              top:    "#{renderedProperties.top - $scope.camera.yOffset}px"
+              left:   "#{renderedProperties.left - xOffset}px"
+              top:    "#{renderedProperties.top - yOffset}px"
               width:  "#{renderedProperties.width}px"
               height: "#{renderedProperties.height}px"
           frames.push frame
@@ -64,8 +69,10 @@ define (require) ->
             height: $('#camera-view').height()
           images: images
           frames: frames
-
         $scope.jsonDump = JSON.stringify(data)
+        # $scope.writeToFile()
+
+      $scope.writeToFile = () ->
         filer = new Filer()
         filer.init
           persistent: true
