@@ -22,22 +22,22 @@ define (require) ->
         for i in [$scope.timeStart..$scope.timeEnd]
           value: i
 
-      $scope.layers = []
-      $scope.selectedLayer = null
+      $scope.objects = []
+      $scope.selectedObject = null
 
-      $scope.addLayer = ->
-        if $scope.layer?
-          layer =
-            name: $scope.layer
-          $scope.layers.push layer
-          $scope.selectLayer layer
-          $scope.layer = null
+      $scope.addObject = ->
+        if $scope.object?
+          object =
+            name: $scope.object
+          $scope.objects.push object
+          $scope.selectObject object
+          $scope.object = null
 
-      $scope.selectLayer = (layer) ->
-        $scope.selectedLayer = layer
+      $scope.selectObject = (object) ->
+        $scope.selectedObject = object
 
-      $scope.isLayerSelected = (layer) ->
-        $scope.selectedLayer is layer
+      $scope.isObjectSelected = (object) ->
+        $scope.selectedObject is object
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']

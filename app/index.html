@@ -12,35 +12,36 @@
     <div class="pure-g top">
       <div class="properties pure-u-1-4">
         <h3 class="panel-title">Object Properties</h3>
-        <ul ng-show="selectedLayer">
-          <li> <span>Width</span>   {{selectedLayer.width}}  </li>
-          <li> <span>Height</span>  {{selectedLayer.height}} </li>
-          <li> <span>X</span>       {{selectedLayer.x}}      </li>
-          <li> <span>Y</span>       {{selectedLayer.y}}      </li>
+        <ul ng-show="selectedObject">
+          <li> <span>Width</span>   {{selectedObject.width}}  </li>
+          <li> <span>Height</span>  {{selectedObject.height}} </li>
+          <li> <span>X</span>       {{selectedObject.x}}      </li>
+          <li> <span>Y</span>       {{selectedObject.y}}      </li>
         </ul>
-        <p ng-hide="selectedLayer">
+        <p ng-hide="selectedObject">
           No object selected.
         </p>
       </div>
       <div class="scene pure-u-3-4">
         <h3 class="panel-title">Scene</h3>
-        <div class="layer" ng-repeat="layer in layers"
-          ng-class="{selected: isLayerSelected(layer)}">
-          <span>{{layer.name}}</span>
+        <div class="object" ng-repeat="object in objects"
+          ng-class="{selected: isObjectSelected(object)}">
+          <span>{{object.name}}</span>
         </div>
       </div>
     </div>
 
     <div class="pure-g bottom">
-      <div class="layers pure-u-1-4">
-        <h3 class="panel-title">Layers</h3>
+      <div class="objects pure-u-1-4">
+        <h3 class="panel-title">Objects</h3>
         <ul>
-            <li ng-repeat="layer in layers" ng-click="selectLayer(layer)" ng-class="{selected: isLayerSelected(layer)}">
-            <span>{{layer.name}}</span>
+          <li ng-repeat="object in objects" ng-click="selectObject(object)"
+            ng-class="{selected: isObjectSelected(object)}">
+            <span>{{object.name}}</span>
           </li>
         </ul>
-        <form ng-submit="addLayer()">
-          <input type="text" ng-model="layer">
+        <form ng-submit="addObject()">
+          <input type="text" ng-model="object">
           <input type="submit" value="add">
         </form>
       </div>
