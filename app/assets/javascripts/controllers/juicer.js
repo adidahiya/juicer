@@ -2,17 +2,20 @@
 (function() {
 
   define(function(require) {
-    var $, DEBUG, angular, initAppModule, _;
+    var $, DEBUG, MAX_ANIMATION_TIME, angular, initAppModule, _;
     _ = require('underscore');
     $ = require('jquery');
     angular = require('angular');
     DEBUG = true;
+    MAX_ANIMATION_TIME = 300;
     initAppModule = function() {
       var appModule;
       appModule = angular.module('juicer', []);
       window.JuicerController = function($scope) {
         var i;
         $scope.zoomLevel = 0;
+        $scope.keyframedProperties = ['width', 'height', 'x', 'y'];
+        $scope.time = 0;
         $scope.timeStart = 0;
         $scope.timeEnd = 49;
         $scope.visibleTicks = (function() {
@@ -28,21 +31,128 @@
         $scope.objects = [];
         $scope.selectedObject = null;
         $scope.addObject = function() {
-          var object;
+          var object, _i, _results;
           if ($scope.object != null) {
             object = {
-              name: $scope.object
+              name: $scope.object,
+              width: 10,
+              height: 10,
+              x: 10,
+              y: 10
             };
             $scope.objects.push(object);
             $scope.selectObject(object);
-            return $scope.object = null;
+            $scope.object = null;
+            _results = [];
+            for (i = _i = 0; 0 <= MAX_ANIMATION_TIME ? _i <= MAX_ANIMATION_TIME : _i >= MAX_ANIMATION_TIME; i = 0 <= MAX_ANIMATION_TIME ? ++_i : --_i) {
+              _results.push($scope.frames[i].interpolatedValues[object.name] = _.clone(object));
+            }
+            return _results;
           }
         };
         $scope.selectObject = function(object) {
           return $scope.selectedObject = object;
         };
-        return $scope.isObjectSelected = function(object) {
+        $scope.isObjectSelected = function(object) {
           return $scope.selectedObject === object;
+        };
+        $scope.frames = (function() {
+          var _i, _results;
+          _results = [];
+          for (i = _i = 0; 0 <= MAX_ANIMATION_TIME ? _i <= MAX_ANIMATION_TIME : _i >= MAX_ANIMATION_TIME; i = 0 <= MAX_ANIMATION_TIME ? ++_i : --_i) {
+            _results.push({
+              keys: {},
+              interpolatedValues: {}
+            });
+          }
+          return _results;
+        })();
+        $scope.scrubberChange = function() {
+          var property, _i, _len, _ref, _results;
+          if ($scope.selectedObject != null) {
+            _ref = $scope.keyframedProperties;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              property = _ref[_i];
+              _results.push($scope.selectedObject[property] = $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property]);
+            }
+            return _results;
+          }
+        };
+        $scope.addKeyframe = function() {
+          var frame, property, runInterpolationWalk, _i, _len, _ref;
+          if ($scope.selectedObject == null) {
+            $scope.error = "No object selected to keyframe.";
+            return;
+          }
+          $scope.time = parseInt($scope.time);
+          frame = $scope.frames[$scope.time];
+          frame.keys[$scope.selectedObject.name] = true;
+          _ref = $scope.keyframedProperties;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            property = _ref[_i];
+            $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property];
+          }
+          runInterpolationWalk = function(isForward) {
+            var frameRunner, frameSteps, hasSeenTargetFrames, key, prevFrameRunner, targetFrame, time, timeBound, timeDiff, timeStep, _j, _len1, _ref1, _results;
+            timeStep = isForward ? 1 : -1;
+            timeBound = isForward ? MAX_ANIMATION_TIME : 0;
+            time = $scope.time + timeStep;
+            frameRunner = $scope.frames[time];
+            hasSeenTargetFrames = true;
+            while (!frameRunner.keys[$scope.selectedObject.name]) {
+              if (time === timeBound) {
+                hasSeenTargetFrames = false;
+                break;
+              }
+              time += timeStep;
+              frameRunner = $scope.frames[time];
+            }
+            debugger;
+            if (hasSeenTargetFrames) {
+              targetFrame = frameRunner.interpolatedValues[$scope.selectedObject.name];
+              frameSteps = {};
+              timeDiff = $scope.time - time;
+              _ref1 = $scope.keyframedProperties;
+              for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                key = _ref1[_j];
+                frameSteps[key] = $scope.selectedObject[key] - prevKeyframe[key];
+                if (isForward) {
+                  frameSteps[key] *= -1;
+                }
+              }
+              _results = [];
+              while (time !== $scope.time) {
+                time -= timeStep;
+                frameRunner = $scope.frames[time];
+                prevFrameRunner = $scope.frames[time + timeStep];
+                _results.push((function() {
+                  var _k, _len2, _ref2, _results1;
+                  _ref2 = $scope.keyframedProperties;
+                  _results1 = [];
+                  for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+                    key = _ref2[_k];
+                    _results1.push(frameRunner.interpolatedValues[key] = prevFrameRunner.interpolatedValues[key] + frameSteps[key]);
+                  }
+                  return _results1;
+                })());
+              }
+              return _results;
+            }
+          };
+          if ($scope.time > $scope.timeStart) {
+            runInterpolationWalk(false);
+          }
+          if ($scope.selectedObject.furthestFrameTime < $scope.time) {
+            return $scope.selectedObject.furthestFrameTime = $scope.time;
+          } else {
+            return runInterpolationWalk(true);
+          }
+        };
+        return $scope.removeKeyframe = function() {
+          var frame;
+          frame = $scope.frames[$scope.time];
+          return delete frame.keys[$scope.selectedObject.name];
         };
       };
       return window.JuicerController.$inject = ['$scope'];

@@ -5,6 +5,7 @@ define (require) ->
   angular   = require 'angular'
 
   DEBUG = true
+  MAX_ANIMATION_TIME = 300
 
   initAppModule = () ->
 
@@ -15,7 +16,17 @@ define (require) ->
 
     window.JuicerController = ($scope) ->
 
+      # Scene
       $scope.zoomLevel = 0
+
+      # Timeline
+      $scope.keyframedProperties = [
+        'width'
+        'height'
+        'x'
+        'y'
+      ]
+      $scope.time = 0
       $scope.timeStart = 0
       $scope.timeEnd = 49
 
@@ -30,15 +41,95 @@ define (require) ->
         if $scope.object?
           object =
             name: $scope.object
+            width: 10
+            height: 10
+            x: 10
+            y: 10
           $scope.objects.push object
           $scope.selectObject object
           $scope.object = null
+          for i in [0..MAX_ANIMATION_TIME]
+            $scope.frames[i].interpolatedValues[object.name] = _.clone(object)
 
       $scope.selectObject = (object) ->
         $scope.selectedObject = object
 
       $scope.isObjectSelected = (object) ->
         $scope.selectedObject is object
+
+      $scope.frames =
+        for i in [0..MAX_ANIMATION_TIME]
+          # obj_name -> True if keyframe is at that time
+          keys: {}
+          # obj properties interpolated for point in time
+          interpolatedValues: {}
+
+      $scope.scrubberChange = () ->
+        if $scope.selectedObject?
+          for property in $scope.keyframedProperties
+            $scope.selectedObject[property] = $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property]
+
+      $scope.addKeyframe = () ->
+        unless $scope.selectedObject?
+          $scope.error = "No object selected to keyframe."
+          return
+
+        $scope.time = parseInt($scope.time)
+        frame = $scope.frames[$scope.time]
+        frame.keys[$scope.selectedObject.name] = true
+
+        for property in $scope.keyframedProperties
+          $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property] = $scope.selectedObject[property]
+
+        runInterpolationWalk = (isForward) ->
+          timeStep  = if isForward then 1 else -1
+          timeBound = if isForward then MAX_ANIMATION_TIME else 0
+
+          time = $scope.time + timeStep
+          frameRunner = $scope.frames[time]
+          hasSeenTargetFrames = true
+          # Find the target (prev or next) keyframe for this object
+          while not frameRunner.keys[$scope.selectedObject.name]
+            if time is timeBound
+              hasSeenTargetFrames = false
+              break
+            time += timeStep
+            frameRunner = $scope.frames[time]
+          debugger
+          if hasSeenTargetFrames
+            targetFrame = frameRunner.interpolatedValues[$scope.selectedObject.name]
+            # Calculate interpolation step between targetFrame and current
+            frameSteps = {}
+            timeDiff = $scope.time - time
+            for key in $scope.keyframedProperties
+              frameSteps[key] = $scope.selectedObject[key] - prevKeyframe[key]
+              # Invert if going forward
+              if isForward
+                frameSteps[key] *= -1
+            # Fill in all interpolated values based on frameStep
+            while time isnt $scope.time
+              time -= timeStep
+              frameRunner     = $scope.frames[time]
+              prevFrameRunner = $scope.frames[time + timeStep]
+              for key in $scope.keyframedProperties
+                frameRunner.interpolatedValues[key] =
+                  prevFrameRunner.interpolatedValues[key] + frameSteps[key]
+
+        # Walk backwards to interpolate values
+        if $scope.time > $scope.timeStart
+          runInterpolationWalk(false)
+
+        # Update furthestFrameTime for this object
+        if $scope.selectedObject.furthestFrameTime < $scope.time
+          $scope.selectedObject.furthestFrameTime = $scope.time
+        else
+          # Walk forwards to interpolate values, too
+          runInterpolationWalk(true)
+
+      # TODO
+      $scope.removeKeyframe = () ->
+        frame = $scope.frames[$scope.time]
+        delete frame.keys[$scope.selectedObject.name]
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']

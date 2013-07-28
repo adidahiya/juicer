@@ -4,7 +4,6 @@ require.config
     jquery:     'vendor/jquery-2.0.3.min'
     underscore: 'vendor/lodash.min'
     angular:    'vendor/angular.min'
-    angularUI:  'vendor/ui-utils.min'
   shim:
     underscore:
       deps: []
@@ -12,9 +11,6 @@ require.config
     angular:
       deps: []
       exports: 'angular'
-    angularUI:
-      deps: ['angular']
-      exports: 'angularUI'
 
 define (require, exports, module) ->
 
