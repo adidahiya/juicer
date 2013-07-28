@@ -85,6 +85,7 @@
           <li ng-repeat="object in objects" ng-click="selectObject(object)"
             ng-class="{selected: isObjectSelected(object)}">
             <span>{{object.name}}</span>
+            <span class="remove" ng-show="canRemove(object)" ng-click="removeObject(object)">&times;</span>
           </li>
         </ul>
         <form ng-submit="addObject()">

@@ -121,7 +121,7 @@ define (require) ->
       # ----------------------------------------------------------------------
       $scope.time       = 0
       $scope.timeStart  = 0
-      $scope.timeEnd    = 300
+      $scope.timeEnd    = 150
       $scope.playSpeed  = 40
 
       $scope.isPaused = true
@@ -192,6 +192,13 @@ define (require) ->
 
       $scope.isObjectSelected = (object) ->
         $scope.selectedObject is object
+
+      $scope.canRemove = (object) ->
+        object.name isnt $scope.camera.name
+
+      $scope.removeObject = (object) ->
+        idx = _($scope.objects).indexOf object
+        $scope.objects.splice(idx, 1)
 
       $scope.frames =
         for i in [$scope.timeStart...$scope.timeEnd]
