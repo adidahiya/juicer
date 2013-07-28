@@ -30,7 +30,33 @@ html, body, .juicer-controller {
 
 .scene {
   height: 100%;
-  border-left: solid 1px #cccccc; }
+  border-right: solid 1px #cccccc; }
+  .scene .scene-controls {
+    float: right;
+    margin-top: -33px; }
+    .scene .scene-controls > span {
+      display: inline-block;
+      float: right;
+      padding: 7px; }
+    .scene .scene-controls input[type=range] {
+      float: right;
+      -webkit-appearance: none;
+      background-color: #e6e6e6;
+      width: 100px;
+      height: 33px;
+      border-left: solid 1px #cccccc;
+      border-bottom: solid 1px #cccccc;
+      outline: none; }
+    .scene .scene-controls input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background-color: #888888;
+      width: 1px;
+      height: 33px; }
+  .scene .scene-objects .object {
+    position: absolute;
+    background: #888888; }
+    .scene .scene-objects .object.selected {
+      background: black; }
 
 .pure-g.bottom {
   height: 25%; }
