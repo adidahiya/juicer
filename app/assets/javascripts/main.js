@@ -5,8 +5,7 @@
     paths: {
       jquery: 'vendor/jquery-2.0.3.min',
       underscore: 'vendor/lodash.min',
-      angular: 'vendor/angular.min',
-      angularUI: 'vendor/ui-utils.min'
+      angular: 'vendor/angular.min'
     },
     shim: {
       underscore: {
@@ -16,10 +15,6 @@
       angular: {
         deps: [],
         exports: 'angular'
-      },
-      angularUI: {
-        deps: ['angular'],
-        exports: 'angularUI'
       }
     }
   });

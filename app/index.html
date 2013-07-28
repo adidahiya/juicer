@@ -21,6 +21,12 @@
         <p ng-hide="selectedObject">
           No object selected.
         </p>
+        <form ng-submit="addKeyframe()">
+          <input type="submit" value="Add keyframe">
+        </form>
+        <form ng-submit="removeKeyframe()">
+          <input type="submit" value="Remove keyframe">
+        </form>
       </div>
       <div class="scene pure-u-3-4">
         <h3 class="panel-title">Scene</h3>
