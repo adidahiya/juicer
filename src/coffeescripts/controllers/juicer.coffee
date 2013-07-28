@@ -59,6 +59,11 @@ define (require) ->
       $scope.pan =
         isActive: false
 
+      $scope.reset = () ->
+        $scope.camera.xOffset = $scope.rendererWidth / 2
+        $scope.camera.yOffset = $scope.rendererHeight / 2
+        $scope.currentScale = 1
+
       # Timeline
       # ----------------------------------------------------------------------
       $scope.time       = 0

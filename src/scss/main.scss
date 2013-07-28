@@ -45,7 +45,7 @@ input[type=button], input[type=submit] {
   border: solid 1px $blue;
   color: white;
   cursor: pointer;
-  padding: 5px;
+  padding: 5px 8px;
   margin: 0;
   font-weight: bold;
 
@@ -136,10 +136,10 @@ input[type=button], input[type=submit] {
     input[type=range] {
       -webkit-appearance: none;
       background-color: white;
+      margin: -1px 10px 0 0;
       width: 100px;
       height: $titleHeight;
-      border-left: solid 1px $lightGray;
-      border-bottom: solid 1px $lightGray;
+      border: solid 1px $lightGray;
       outline: none;
     }
 
@@ -149,12 +149,17 @@ input[type=button], input[type=submit] {
       width: 1px;
       height: $titleHeight;
     }
+
+    input.juice {
+      margin-right: 10px;
+    }
   }
 
   .scene-objects {
     width: 100%;
     height: calc(100% - 33px);
     float: left;
+    overflow: hidden;
 
     .object {
       position: absolute;

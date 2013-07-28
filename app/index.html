@@ -14,6 +14,7 @@
       <div class="scene pure-u-3-4">
         <h3 class="panel-title">Juicer</h3>
         <div class="scene-controls">
+          <input type="button" ng-click="center()" value="Reset">
           <input class="zoom" type="range" min="0" max="100"
             ng-model="zoomLevel" ng-change="zoom()">
           <span class="zoom-label">Zoom: {{zoomLevel}}</span>
@@ -21,6 +22,7 @@
           <input type="button" ng-click="rescale(0.5)" value="0.5x">
           <input type="button" ng-click="play()" ng-show="isPaused" value="&#9654;">
           <input type="button" ng-click="pause()" ng-hide="isPaused" value="&#9632;">
+          <input type="button" ng-click="download()" class="juice" value="Juice it!">
         </div>
         <render-window class="scene-objects">
           <div class="object" ng-repeat="object in objects"
