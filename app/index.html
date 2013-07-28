@@ -27,13 +27,15 @@
             ng-style="getObjectStyle(object)">
             <img ng-src="{{object.src}}"/>
           </div>
+          <div id="camera-view">
+          </div>
         </render-window>
       </div>
 
       <div class="properties pure-u-1-4">
         <h3 class="panel-title">Object Properties</h3>
         <ul ng-show="selectedObject">
-          <li ng-repeat="property in keyframedProperties">
+          <li ng-repeat="property in properties()">
             <span>{{property}}</span>
             <input type="number" ng-model="selectedObject[property]" size="10">
           </li>

@@ -18,8 +18,8 @@ define (require) ->
       link: ($scope, $element, attrs) ->
         $scope.rendererWidth  = parseInt $element.width()
         $scope.rendererHeight = parseInt $element.height()
-        $scope.xOffset = $scope.rendererWidth / 2
-        $scope.yOffset = $scope.rendererHeight / 2
+        $scope.camera.xOffset = $scope.rendererWidth / 2
+        $scope.camera.yOffset = $scope.rendererHeight / 2
 
         $element.mousedown (event) ->
           $scope.$apply () ->
@@ -30,8 +30,8 @@ define (require) ->
         onMousemove = (event) =>
           if $scope.pan.isActive
             $scope.$apply () ->
-              $scope.xOffset += (event.pageX - $scope.pan.xStart) / 20
-              $scope.yOffset += (event.pageY - $scope.pan.yStart) / 20
+              $scope.camera.xOffset += (event.pageX - $scope.pan.xStart) / 20
+              $scope.camera.yOffset += (event.pageY - $scope.pan.yStart) / 20
               $scope.scrubberChange()
 
         $element.mousemove onMousemove
@@ -44,8 +44,6 @@ define (require) ->
       # Scene navigation
       # ----------------------------------------------------------------------
       $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
-      $scope.xOffset = 500
-      $scope.yOffset = 250
       $scope.currentScale = 1
 
       $scope.zoom = () ->
@@ -53,10 +51,10 @@ define (require) ->
         halfWidth   = $scope.rendererWidth / 2
         halfHeight  = $scope.rendererHeight / 2
 
-        xCenter = ($scope.xOffset - halfWidth) * scale
-        yCenter = ($scope.yOffset - halfHeight) * scale
-        $scope.xOffset = xCenter + halfWidth
-        $scope.yOffset = yCenter + halfHeight
+        xCenter = ($scope.camera.xOffset - halfWidth) * scale
+        yCenter = ($scope.camera.yOffset - halfHeight) * scale
+        $scope.camera.xOffset = xCenter + halfWidth
+        $scope.camera.yOffset = yCenter + halfHeight
         $scope.currentScale = scale
 
       $scope.pan =
@@ -64,12 +62,6 @@ define (require) ->
 
       # Timeline
       # ----------------------------------------------------------------------
-      $scope.keyframedProperties = [
-        'width'
-        'height'
-        'x'
-        'y'
-      ]
       $scope.time = 0
       $scope.timeStart = 0
       $scope.timeEnd = 49
@@ -101,12 +93,20 @@ define (require) ->
 
       # Scene objects
       # ----------------------------------------------------------------------
-      $scope.objects = []
+      $scope.camera =
+        name: "Camera"
+        xOffset: 500
+        yOffset: 250
+        scale: $scope.currentScale
+      $scope.objects = [$scope.camera]
       $scope.selectedObject = null
 
+      $scope.properties = () ->
+        _.keys(_.omit($scope.selectedObject, "name", "$$hashKey", "src"))
+
       $scope.getObjectStyle = (object) ->
-        left:   $scope.currentScale * object.x + $scope.xOffset
-        top:    $scope.currentScale * object.y + $scope.yOffset + SCENE_TOP_PADDING
+        left:   $scope.currentScale * object.x + $scope.camera.xOffset
+        top:    $scope.currentScale * object.y + $scope.camera.yOffset + SCENE_TOP_PADDING
         width:  $scope.currentScale * object.width
         height: $scope.currentScale * object.height
 
@@ -137,20 +137,22 @@ define (require) ->
           keys: {}
           # obj properties interpolated for point in time
           interpolatedValues: {}
+      for i in [0..MAX_ANIMATION_TIME]
+        $scope.frames[i].interpolatedValues[$scope.camera.name] = _.clone($scope.camera)
 
       # Look up interpolated values to show animated steps
       $scope.scrubberChange = () ->
         for object in $scope.objects
           objectValues = \
             $scope.frames[$scope.time].interpolatedValues[object.name]
-          for prop in $scope.keyframedProperties
+          for prop in $scope.properties()
             object[prop] = parseFloat(objectValues[prop])
 
       $scope.setPropertyAtTime = (property, time, val) ->
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
 
       $scope.setObjectAtTime = (time, object) ->
-        for property in $scope.keyframedProperties
+        for property in $scope.properties()
           $scope.setPropertyAtTime property, time, object[property]
 
       $scope.addKeyframe = () ->
@@ -194,7 +196,7 @@ define (require) ->
       $scope.interpolate = (timeStart, timeEnd, timeStep, name, frames) ->
         getDifference = (objectStart, objectEnd) ->
           difference = {}
-          for property in $scope.keyframedProperties
+          for property in $scope.properties()
             dProp = objectEnd[property] - objectStart[property]
             dT = timeEnd - timeStart
             difference[property] = parseFloat(dProp / dT)
@@ -206,7 +208,7 @@ define (require) ->
         t = 0
         while timeStart + t isnt timeEnd
           time = timeStart + t
-          for property in $scope.keyframedProperties
+          for property in $scope.properties()
             rv = parseFloat(objectStart[property]) + objectDifference[property] * t
             $scope.setPropertyAtTime property, time, rv.toFixed(3)
           t += timeStep

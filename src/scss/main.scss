@@ -179,3 +179,13 @@ html, body, .juicer-controller {
           width: 100%;
      }
 }
+
+#camera-view {
+     width: 600px;
+     height: 400px;
+     position: relative;
+     margin: auto;
+     margin-top: 50px;
+     border: 1px gray dotted;
+     pointer-events: none;
+}
