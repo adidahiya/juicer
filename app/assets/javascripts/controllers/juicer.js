@@ -2,16 +2,17 @@
 (function() {
 
   define(function(require) {
-    var DEBUG, angular, angularUI, initAppModule, _;
+    var $, DEBUG, angular, initAppModule, _;
     _ = require('underscore');
+    $ = require('jquery');
     angular = require('angular');
-    angularUI = require('angularUI');
     DEBUG = true;
     initAppModule = function() {
       var appModule;
       appModule = angular.module('juicer', []);
       window.JuicerController = function($scope) {
         var i;
+        $scope.zoomLevel = 0;
         $scope.timeStart = 0;
         $scope.timeEnd = 49;
         $scope.visibleTicks = (function() {

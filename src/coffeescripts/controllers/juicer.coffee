@@ -1,8 +1,8 @@
 define (require) ->
 
   _         = require 'underscore'
+  $         = require 'jquery'
   angular   = require 'angular'
-  angularUI = require 'angularUI'
 
   DEBUG = true
 
@@ -15,6 +15,7 @@ define (require) ->
 
     window.JuicerController = ($scope) ->
 
+      $scope.zoomLevel = 0
       $scope.timeStart = 0
       $scope.timeEnd = 49
 

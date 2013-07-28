@@ -28,6 +28,10 @@
           ng-class="{selected: isObjectSelected(object)}">
           <span>{{object.name}}</span>
         </div>
+        <div class="scene-controls">
+          <input class="zoom" type="range" ng-model="zoomLevel" min="0" max="100"/>
+          <span>Zoom: {{zoomLevel}}</span>
+        </div>
       </div>
     </div>
 
