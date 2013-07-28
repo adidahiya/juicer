@@ -59,6 +59,12 @@
         </div>
         <input class="scrubber" type="range" ng-model="time"
           min="{{timeStart}}" max="{{timeEnd + 1}}" ng-change="scrubberChange()"/>
+        <div class="keyframes">
+            <div class="tickrow" ng-repeat="object in objects">
+              <div class="tick" ng-repeat="tick in visibleTicks" ng-class="{active: frames[tick.value].keys[object.name] != null}">
+              </div>
+          </div>
+        </div>
       </div>
 
       <div class="objects pure-u-1-4">
