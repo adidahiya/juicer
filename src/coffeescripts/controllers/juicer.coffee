@@ -6,6 +6,7 @@ define (require) ->
 
   DEBUG               = false
   MAX_ANIMATION_TIME  = 300
+  MIN_ANIMATION_TIME  = -1
   DEFAULT_ZOOM_LEVEL  = 50
   SCENE_TOP_PADDING   = 35
 
@@ -172,7 +173,7 @@ define (require) ->
         if forwardTime is MAX_ANIMATION_TIME
           # neighbor not found
           backTime = $scope.findKeyFrame($scope.time, false, $scope.selectedObject.name, $scope.frames)
-          if backTime isnt 0
+          if backTime isnt MIN_ANIMATION_TIME
             $scope.setKeyFrame(parseInt(backTime))
           else
             $scope.fill 0, MAX_ANIMATION_TIME, 1
@@ -180,17 +181,16 @@ define (require) ->
             $scope.setKeyFrame(parseInt(forwardTime))
 
       $scope.findKeyFrame = (timeStart, timeEnd, timeStep, name, frames) ->
-        while timeStart isnt timeEnd
+        until timeStart is timeEnd
           if frames[timeStart].keys[name]?
             break
           timeStart += timeStep
         return timeStart
 
       $scope.fill = (timeStart, timeEnd, timeStep) ->
-        while timeStart isnt timeEnd
+        until timeStart is timeEnd
           $scope.setObjectAtTime timeStart, $scope.selectedObject
           timeStart += timeStep
-        $scope.setObjectAtTime timeStart, $scope.selectedObject
 
       # Fill in all interpolated values based on frameStep
       $scope.interpolate = (timeStart, timeEnd, timeStep, name, frames) ->
@@ -206,7 +206,7 @@ define (require) ->
         objectDifference = getDifference(objectStart, objectEnd)
 
         t = 0
-        while timeStart + t isnt timeEnd
+        until timeStart + t is timeEnd
           time = timeStart + t
           for property in $scope.properties()
             rv = parseFloat(objectStart[property]) + objectDifference[property] * t
@@ -218,7 +218,10 @@ define (require) ->
         $scope.setObjectAtTime time, $scope.selectedObject
 
         runInterpolationWalk = (timeStart, timeBound, timeStep, name, frames) ->
-          timeEnd = $scope.findKeyFrame(timeStart + timeStep, timeBound, timeStep, name, frames)
+          projection = timeStart + timeStep
+          unless MIN_ANIMATION_TIME < projection < MAX_ANIMATION_TIME
+            return
+          timeEnd = $scope.findKeyFrame(projection, timeBound, timeStep, name, frames)
           if timeEnd is timeBound
             $scope.fill timeStart, timeEnd, timeStep
           else
@@ -227,7 +230,7 @@ define (require) ->
         name = $scope.selectedObject.name
         frames = $scope.frames
 
-        runInterpolationWalk(time, 0, -1, name, frames)
+        runInterpolationWalk(time, MIN_ANIMATION_TIME, -1, name, frames)
         runInterpolationWalk(time, MAX_ANIMATION_TIME, 1, name, frames)
 
     # Initializes the controller
