@@ -5,8 +5,6 @@ define (require) ->
   angular   = require 'angular'
 
   DEBUG               = false
-  MAX_ANIMATION_TIME  = 300
-  MIN_ANIMATION_TIME  = -1
   DEFAULT_ZOOM_LEVEL  = 50
   SCENE_TOP_PADDING   = 35
 
@@ -63,10 +61,10 @@ define (require) ->
 
       # Timeline
       # ----------------------------------------------------------------------
-      $scope.time = 0
-      $scope.timeStart = 0
-      $scope.timeEnd = 49
-      $scope.playSpeed = 200
+      $scope.time       = 0
+      $scope.timeStart  = 0
+      $scope.timeEnd    = 300
+      $scope.playSpeed  = 200
 
       $scope.isPaused = true
       $scope.play = () ->
@@ -89,7 +87,7 @@ define (require) ->
           $scope.play()
 
       $scope.visibleTicks =
-        for i in [$scope.timeStart..$scope.timeEnd]
+        for i in [$scope.timeStart...$scope.timeEnd]
           value: i
 
       # Scene objects
@@ -123,7 +121,7 @@ define (require) ->
           $scope.objects.push newObject
           $scope.selectObject newObject
           $scope.newObjectName = null
-          for i in [0..MAX_ANIMATION_TIME]
+          for i in [$scope.timeStart...$scope.timeEnd]
             $scope.frames[i].interpolatedValues[newObject.name] = _.clone(newObject)
 
       $scope.selectObject = (object) ->
@@ -133,12 +131,12 @@ define (require) ->
         $scope.selectedObject is object
 
       $scope.frames =
-        for i in [0..MAX_ANIMATION_TIME]
+        for i in [$scope.timeStart...$scope.timeEnd]
           # obj_name -> True if keyframe is at that time
           keys: {}
           # obj properties interpolated for point in time
           interpolatedValues: {}
-      for i in [0..MAX_ANIMATION_TIME]
+      for i in [$scope.timeStart...$scope.timeEnd]
         $scope.frames[i].interpolatedValues[$scope.camera.name] = _.clone($scope.camera)
 
       # Look up interpolated values to show animated steps
@@ -170,13 +168,13 @@ define (require) ->
 
         # Re-interpolate neighbors
         forwardTime = $scope.findKeyFrame($scope.time, true, $scope.selectedObject.name, $scope.frames)
-        if forwardTime is MAX_ANIMATION_TIME
+        if forwardTime is $scope.timeEnd
           # neighbor not found
           backTime = $scope.findKeyFrame($scope.time, false, $scope.selectedObject.name, $scope.frames)
-          if backTime isnt MIN_ANIMATION_TIME
-            $scope.setKeyFrame(parseInt(backTime))
+          if backTime is $scope.timeStart
+            $scope.fill $scope.timeStart, $scope.timeEnd, 1
           else
-            $scope.fill 0, MAX_ANIMATION_TIME, 1
+            $scope.setKeyFrame(parseInt(backTime))
         else
             $scope.setKeyFrame(parseInt(forwardTime))
 
@@ -219,19 +217,18 @@ define (require) ->
 
         runInterpolationWalk = (timeStart, timeBound, timeStep, name, frames) ->
           projection = timeStart + timeStep
-          unless MIN_ANIMATION_TIME < projection < MAX_ANIMATION_TIME
-            return
-          timeEnd = $scope.findKeyFrame(projection, timeBound, timeStep, name, frames)
-          if timeEnd is timeBound
-            $scope.fill timeStart, timeEnd, timeStep
-          else
-            $scope.interpolate timeStart, timeEnd, timeStep, name, frames
+          if $scope.timeStart <= projection <= $scope.timeEnd
+            timeEnd = $scope.findKeyFrame(projection, timeBound, timeStep, name, frames)
+            if timeEnd is timeBound
+              $scope.fill timeStart, timeEnd, timeStep
+            else
+              $scope.interpolate timeStart, timeEnd, timeStep, name, frames
 
         name = $scope.selectedObject.name
         frames = $scope.frames
 
-        runInterpolationWalk(time, MIN_ANIMATION_TIME, -1, name, frames)
-        runInterpolationWalk(time, MAX_ANIMATION_TIME, 1, name, frames)
+        runInterpolationWalk(time, $scope.timeStart - 1, -1, name, frames)
+        runInterpolationWalk(time, $scope.timeEnd, 1, name, frames)
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope', '$timeout']

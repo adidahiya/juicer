@@ -53,20 +53,26 @@
     </div>
 
     <div class="pure-g bottom">
-      <div class="timeline pure-u-3-4">
-        <div class="scale">
-          <div class="tick" ng-repeat="tick in visibleTicks"
-            ng-class="{active: tick.value == time}">
-            {{tick.value}}
+      <div class="timeline-wrapper pure-u-3-4">
+        <div class="timeline">
+
+          <div class="scale">
+            <div class="tick" ng-repeat="tick in visibleTicks"
+              ng-class="{active: tick.value == time}">
+              {{tick.value}}
+            </div>
           </div>
-        </div>
-        <input class="scrubber" type="range" ng-model="time"
-          min="{{timeStart}}" max="{{timeEnd + 1}}" ng-change="scrubberChange()"/>
-        <div class="keyframes">
+          <input class="scrubber" type="range" ng-model="time"
+            min="{{timeStart}}" max="{{timeEnd - 1}}" ng-change="scrubberChange()"/>
+
+          <div class="keyframes">
             <div class="tickrow" ng-repeat="object in objects">
-              <div class="tick" ng-repeat="tick in visibleTicks" ng-class="{active: frames[tick.value].keys[object.name] != null}">
+              <div class="tick" ng-repeat="tick in visibleTicks"
+                ng-class="{active: frames[tick.value].keys[object.name] != null}">
               </div>
+            </div>
           </div>
+
         </div>
       </div>
 
