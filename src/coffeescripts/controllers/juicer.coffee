@@ -4,9 +4,10 @@ define (require) ->
   $         = require 'jquery'
   angular   = require 'angular'
 
-  DEBUG = true
-  MAX_ANIMATION_TIME = 300
-  DEFAULT_ZOOM_LEVEL = 50
+  DEBUG               = false
+  MAX_ANIMATION_TIME  = 300
+  DEFAULT_ZOOM_LEVEL  = 50
+  SCENE_TOP_PADDING   = 35
 
   initAppModule = () ->
 
@@ -15,34 +16,19 @@ define (require) ->
     appModule.directive "renderWindow", () ->
       restrict: 'E'
       link: ($scope, $element, attrs) ->
-        $scope.rendererWidth = $element.width()
+        $scope.rendererWidth  = $element.width()
         $scope.rendererHeight = $element.height()
+        $scope.xOffset = $scope.rendererWidth / 2
+        $scope.yOffset = $scope.rendererHeight / 2
 
-    appModule.directive "renderedObject", () ->
-      restrict: 'E'
-      link: ($scope, $element, attrs) ->
-        render = () ->
-          $element.css
-            left:   $scope.object.x * $scope.currentScale + $scope.xOffset
-            top:    $scope.object.y * $scope.currentScale + $scope.yOffset
-            width:  $scope.object.width * $scope.currentScale
-            height: $scope.object.height * $scope.currentScale
-
-        $scope.$watch "object.x", render
-        $scope.$watch "object.y", render
-        $scope.$watch "object.width", render
-        $scope.$watch "object.height", render
-        $scope.$watch "currentScale", render
-        $scope.$watch "xOffset", render
-        $scope.$watch "yOffset", render
 
     window.JuicerController = ($scope, $timeout) ->
 
-      # Scene
-      $scope.zoomLevel = 50
-      # TODO: make not static
-      $scope.xOffset = 300
-      $scope.yOffset = 200
+      # Scene navigation
+      # ----------------------------------------------------------------------
+      $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
+      $scope.xOffset = 500
+      $scope.yOffset = 250
       $scope.currentScale = 1
 
       $scope.zoom = () ->
@@ -60,6 +46,7 @@ define (require) ->
         isActive: false
 
       # Timeline
+      # ----------------------------------------------------------------------
       $scope.keyframedProperties = [
         'width'
         'height'
@@ -71,17 +58,17 @@ define (require) ->
       $scope.timeEnd = 49
       $scope.playSpeed = 200
 
-      $scope.playInterval = null
       $scope.isPaused = true
       $scope.play = () ->
         $scope.isPaused = false
-        stopInterval = $timeout(`function incTime() {
-          $scope.time = ($scope.time + 1) % $scope.timeEnd;
-          $scope.playInterval = $timeout(incTime, $scope.playSpeed);
-        }`, $scope.playSpeed)
+        $scope.playInterval = setInterval () ->
+          $scope.$apply () ->
+            $scope.time = ($scope.time + 1) % $scope.timeEnd
+            $scope.scrubberChange()
+        , $scope.playSpeed
       $scope.pause = () ->
         $scope.isPaused = true
-        $timeout.cancel $scope.playInterval
+        clearInterval $scope.playInterval
 
       $scope.setPlaySpeed = (factor) ->
         unless $scope.isPaused
@@ -95,22 +82,30 @@ define (require) ->
         for i in [$scope.timeStart..$scope.timeEnd]
           value: i
 
+      # Scene objects
+      # ----------------------------------------------------------------------
       $scope.objects = []
       $scope.selectedObject = null
 
+      $scope.getObjectStyle = (object) ->
+        left:   $scope.currentScale * object.x + $scope.xOffset
+        top:    $scope.currentScale * object.y + $scope.yOffset + SCENE_TOP_PADDING
+        width:  $scope.currentScale * object.width
+        height: $scope.currentScale * object.height
+
       $scope.addObject = ->
-        if $scope.object?
-          object =
-            name: $scope.object
+        if $scope.newObjectName?
+          newObject =
+            name: $scope.newObjectName
             width: 10
             height: 10
             x: 10
             y: 10
-          $scope.objects.push object
-          $scope.selectObject object
-          $scope.object = null
+          $scope.objects.push newObject
+          $scope.selectObject newObject
+          $scope.newObjectName = null
           for i in [0..MAX_ANIMATION_TIME]
-            $scope.frames[i].interpolatedValues[object.name] = _.clone(object)
+            $scope.frames[i].interpolatedValues[newObject.name] = _.clone(newObject)
 
       $scope.selectObject = (object) ->
         $scope.selectedObject = object
@@ -125,13 +120,13 @@ define (require) ->
           # obj properties interpolated for point in time
           interpolatedValues: {}
 
+      # Look up interpolated values to show animated steps
       $scope.scrubberChange = () ->
         for object in $scope.objects
-          for property in $scope.keyframedProperties
-            object[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[object.name][property])
-        if $scope.selectedObject?
-          for property in $scope.keyframedProperties
-            $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
+          objectValues = \
+            $scope.frames[$scope.time].interpolatedValues[object.name]
+          for prop in $scope.keyframedProperties
+            object[prop] = parseFloat(objectValues[prop])
 
       $scope.setPropertyAtTime = (property, time, val) ->
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
@@ -170,7 +165,7 @@ define (require) ->
             break
           timeStart += timeStep
         return timeStart
-      
+
       $scope.fill = (timeStart, timeEnd, timeStep) ->
         while timeStart isnt timeEnd
           $scope.setObjectAtTime timeStart, $scope.selectedObject
