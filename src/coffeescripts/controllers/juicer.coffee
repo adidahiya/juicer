@@ -121,11 +121,9 @@ define (require) ->
             $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
 
       $scope.setPropertyAtTime = (property, time, val) ->
-        console.log "setPropertyAtTime", property, time, val
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
 
       $scope.setObjectAtTime = (time, object) ->
-        console.log "setObjectAtTime", time, object
         for property in $scope.keyframedProperties
           $scope.setPropertyAtTime property, time, object[property]
 
@@ -155,7 +153,7 @@ define (require) ->
 
       $scope.findKeyFrame = (timeStart, timeEnd, timeStep, name, frames) ->
         while timeStart isnt timeEnd
-          if frames[timeStart].keys[name]
+          if frames[timeStart].keys[name]?
             break
           timeStart += timeStep
         return timeStart
@@ -168,15 +166,12 @@ define (require) ->
 
       # Fill in all interpolated values based on frameStep
       $scope.interpolate = (timeStart, timeEnd, timeStep, name, frames) ->
-        console.log "interpolate", timeEnd
         getDifference = (objectStart, objectEnd) ->
-          console.log "getDifference", objectStart, objectEnd
           difference = {}
           for property in $scope.keyframedProperties
             dProp = objectEnd[property] - objectStart[property]
             dT = timeEnd - timeStart
             difference[property] = parseFloat(dProp / dT)
-          console.log "difference", difference
           return difference
         objectStart = frames[timeStart].interpolatedValues[name]
         objectEnd = frames[timeEnd].interpolatedValues[name]
@@ -187,7 +182,6 @@ define (require) ->
           time = timeStart + t
           for property in $scope.keyframedProperties
             rv = parseFloat(objectStart[property]) + objectDifference[property] * t
-            console.log "!", parseFloat(objectStart[property]), objectDifference[property] * t
             $scope.setPropertyAtTime property, time, rv.toFixed(3)
           t += timeStep
 
