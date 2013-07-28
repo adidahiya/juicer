@@ -115,17 +115,59 @@ define (require) ->
       $scope.scrubberChange = () ->
         if $scope.selectedObject?
           for property in $scope.keyframedProperties
-            $scope.selectedObject[property] = $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property]
+            $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
 
       $scope.setPropertyAtFrame = (property, time, val) ->
+        console.log "setPropertyAtFrame", property, time, val
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
+
+      $scope.setObjectAtFrame = (time, object) ->
+        for property in $scope.keyframedProperties
+          $scope.setPropertyAtFrame property, time, object[property]
 
       $scope.addKeyframe = () ->
         unless $scope.selectedObject?
           $scope.error = "No object selected to keyframe."
           return
+        $scope.setKeyFrame($scope.time)
 
+      $scope.removeKeyframe = () ->
         $scope.time = parseInt($scope.time)
+        frame = $scope.frames[$scope.time]
+        # Clear key frame
+        delete frame.keys[$scope.selectedObject.name]
+
+        # Re-interpolate neighbors
+        forwardTime = $scope.findNextFrameTime($scope.time, true)
+        if forwardTime is MAX_ANIMATION_TIME
+          # neighbor not found
+          backTime = $scope.findNextFrameTime($scope.time, false)
+          if backTime isnt 0
+            $scope.setKeyFrame(backTime)
+          else
+            $scope.fill 0, MAX_ANIMATION_TIME, 1
+        else
+            $scope.setKeyFrame(forwardTime)
+
+      $scope.findNextFrameTime = (time, isForward) ->
+        TIME_STEP  = if isForward then 1 else -1
+        TIME_BOUND = if isForward then MAX_ANIMATION_TIME else 0
+        frameRunner = $scope.frames[time]
+        while not frameRunner.keys[$scope.selectedObject.name]
+          if time is TIME_BOUND
+            break
+          time += TIME_STEP
+          frameRunner = $scope.frames[time]
+        return time
+      
+      $scope.fill = (start, end, step) ->
+        while start isnt end
+          $scope.setObjectAtFrame start, $scope.selectedObject
+          start += step
+        $scope.setObjectAtFrame start, $scope.selectedObject
+
+      $scope.setKeyFrame = (time) ->
+        $scope.time = parseInt(time)
         frame = $scope.frames[$scope.time]
         frame.keys[$scope.selectedObject.name] = true
 
@@ -149,16 +191,9 @@ define (require) ->
 
           time = $scope.time + TIME_STEP
           frameRunner = $scope.frames[time]
-          hasSeenTargetFrames = true
-          # Find the target (prev or next) keyframe for this object
-          while not frameRunner.keys[$scope.selectedObject.name]
-            if time is TIME_BOUND
-              hasSeenTargetFrames = false
-              break
-            time += TIME_STEP
-            frameRunner = $scope.frames[time]
+          time = $scope.findNextFrameTime(time, isForward)
 
-          if hasSeenTargetFrames
+          if time isnt TIME_BOUND
             frameSteps = getFrameSteps(time, frameRunner.interpolatedValues[$scope.selectedObject.name])
             # Fill in all interpolated values based on frameStep
             while time isnt $scope.time
@@ -168,7 +203,10 @@ define (require) ->
               for property in $scope.keyframedProperties
                 name = $scope.selectedObject.name
                 rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property])
+                console.log "Rv", rv
                 $scope.setPropertyAtFrame property, time, rv.toFixed(3)
+          else
+            $scope.fill $scope.time, TIME_BOUND, TIME_STEP
 
         # Walk backwards to interpolate values
         if $scope.time > $scope.timeStart
@@ -180,11 +218,6 @@ define (require) ->
         else
           # Walk forwards to interpolate values, too
           runInterpolationWalk(true)
-
-      # TODO
-      $scope.removeKeyframe = () ->
-        frame = $scope.frames[$scope.time]
-        delete frame.keys[$scope.selectedObject.name]
 
     # Initializes the controller
     window.JuicerController.$inject = ['$scope', '$timeout']
