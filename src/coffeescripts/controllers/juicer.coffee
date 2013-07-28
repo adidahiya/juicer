@@ -98,9 +98,10 @@ define (require) ->
       $scope.scrubberChange = () ->
         if $scope.selectedObject?
           for property in $scope.keyframedProperties
-            $scope.selectedObject[property] = $scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property]
+            $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
 
       $scope.setPropertyAtFrame = (property, time, val) ->
+        console.log "setPropertyAtFrame", property, time, val
         $scope.frames[time].interpolatedValues[$scope.selectedObject.name][property] = val
 
       $scope.setObjectAtFrame = (time, object) ->
@@ -155,6 +156,7 @@ define (require) ->
               for property in $scope.keyframedProperties
                 name = $scope.selectedObject.name
                 rv = parseFloat(prevFrameRunner.interpolatedValues[name][property]) + parseFloat(frameSteps[property])
+                console.log "Rv", rv
                 $scope.setPropertyAtFrame property, time, rv.toFixed(3)
           else
             time = $scope.time
