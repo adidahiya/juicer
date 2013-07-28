@@ -94,7 +94,6 @@ define (require) ->
       # Scene navigation
       # ----------------------------------------------------------------------
       $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
-      $scope.currentScale = 1
 
       $scope.zoom = () ->
         scale       = $scope.zoomLevel / DEFAULT_ZOOM_LEVEL
@@ -105,7 +104,7 @@ define (require) ->
         yCenter = ($scope.camera.yOffset - halfHeight) * scale
         $scope.camera.xOffset = xCenter + halfWidth
         $scope.camera.yOffset = yCenter + halfHeight
-        $scope.currentScale = scale
+        $scope.camera.scale = scale
 
       $scope.pan =
         isActive: false
@@ -113,8 +112,8 @@ define (require) ->
       $scope.reset = () ->
         $scope.camera.xOffset = $scope.rendererWidth / 2
         $scope.camera.yOffset = $scope.rendererHeight / 2
+        $scope.camera.scale = 1
         $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
-        $scope.currentScale = 1
         $scope.time = 0
         $scope.scrubberChange()
 
@@ -153,7 +152,7 @@ define (require) ->
         name: "Camera"
         xOffset: 500
         yOffset: 250
-        scale: $scope.currentScale
+        scale: 1
       $scope.objects = [$scope.camera]
       $scope.selectedObject = null
 
@@ -161,10 +160,10 @@ define (require) ->
         _.keys(_.omit($scope.selectedObject, "name", "$$hashKey", "src"))
 
       $scope.getObjectStyle = (object) ->
-        left:   $scope.currentScale * object.x + $scope.camera.xOffset
-        top:    $scope.currentScale * object.y + $scope.camera.yOffset + SCENE_TOP_PADDING
-        width:  $scope.currentScale * object.width
-        height: $scope.currentScale * object.height
+        left:   $scope.camera.scale * object.x + $scope.camera.xOffset
+        top:    $scope.camera.scale * object.y + $scope.camera.yOffset + SCENE_TOP_PADDING
+        width:  $scope.camera.scale * object.width
+        height: $scope.camera.scale * object.height
         "-webkit-transform": "rotate(#{object.rotation}deg)"
 
       $scope.getObjectNames = -> _.pluck $scope.objects, 'name'
