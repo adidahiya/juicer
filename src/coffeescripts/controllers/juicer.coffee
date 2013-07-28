@@ -65,6 +65,7 @@ define (require) ->
           images: images
           frames: frames
 
+        $scope.jsonDump = JSON.stringify(data)
         filer = new Filer()
         filer.init
           persistent: true
@@ -72,7 +73,7 @@ define (require) ->
           filer.ls '/', (entries) -> console.log entries
           filer.ls '.', (entries) -> console.log entries
           filer.write 'juiceAnimation.json',
-            data: JSON.stringify(data)
+            data: $scope.jsonDump
             type: 'text/json'
             append: false
           , (fileEntry, fileWriter) =>
@@ -106,13 +107,15 @@ define (require) ->
         $scope.camera.yOffset = $scope.rendererHeight / 2
         $scope.zoomLevel = DEFAULT_ZOOM_LEVEL
         $scope.currentScale = 1
+        $scope.time = 0
+        $scope.scrubberChange()
 
       # Timeline
       # ----------------------------------------------------------------------
       $scope.time       = 0
       $scope.timeStart  = 0
       $scope.timeEnd    = 300
-      $scope.playSpeed  = 200
+      $scope.playSpeed  = 40
 
       $scope.isPaused = true
       $scope.play = () ->
@@ -130,7 +133,7 @@ define (require) ->
         unless $scope.isPaused
           $scope.pause()
           didPause = true
-        $scope.playSpeed *= factor
+        $scope.playSpeed = $scope.playSpeed / factor
         if didPause
           $scope.play()
 

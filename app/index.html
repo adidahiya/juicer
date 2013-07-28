@@ -18,11 +18,12 @@
           <input class="zoom" type="range" min="0" max="100"
             ng-model="zoomLevel" ng-change="zoom()">
           <span class="zoom-label">Zoom: {{zoomLevel}}</span>
-          <input type="button" ng-click="rescale(2)" value="2x">
-          <input type="button" ng-click="rescale(0.5)" value="0.5x">
+          <input type="button" ng-click="setPlaySpeed(2)" value="2x">
+          <input type="button" ng-click="setPlaySpeed(0.5)" value="0.5x">
           <input type="button" ng-click="play()" ng-show="isPaused" value="&#9654;">
           <input type="button" ng-click="pause()" ng-hide="isPaused" value="&#9632;">
           <input type="button" ng-click="download()" class="juice" value="Juice it!">
+          <input type="text" class="json-dump" ng-show="jsonDump" ng-model="jsonDump">
         </div>
         <render-window class="scene-objects">
           <div class="object" ng-repeat="object in objects"

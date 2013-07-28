@@ -122,9 +122,12 @@ input[type=button], input[type=submit] {
     }
 
     > input {
+      height: 30px;
+    }
+
+    > input[type=button] {
       background: white;
       color: $blue;
-      height: 30px;
       margin-left: -1px;
 
       &:hover {
@@ -150,8 +153,12 @@ input[type=button], input[type=submit] {
       height: $titleHeight;
     }
 
-    input.juice {
+    .juice, .json-dump {
       margin-right: 10px;
+    }
+
+    .json-dump {
+      width: 50px;
     }
   }
 
