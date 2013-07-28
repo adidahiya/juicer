@@ -113,6 +113,9 @@ define (require) ->
           interpolatedValues: {}
 
       $scope.scrubberChange = () ->
+        for object in $scope.objects
+          for property in $scope.keyframedProperties
+            object[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[object.name][property])
         if $scope.selectedObject?
           for property in $scope.keyframedProperties
             $scope.selectedObject[property] = parseFloat($scope.frames[$scope.time].interpolatedValues[$scope.selectedObject.name][property])
