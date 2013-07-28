@@ -165,6 +165,8 @@ define (require) ->
         width:  $scope.camera.scale * object.width
         height: $scope.camera.scale * object.height
         "-webkit-transform": "rotate(#{object.rotation}deg)"
+        "border-radius": "#{object.borderRadius}%"
+        overflow: "hidden"
 
       $scope.getObjectNames = -> _.pluck $scope.objects, 'name'
 
@@ -178,6 +180,7 @@ define (require) ->
             x: -(DEFAULT_IMAGE_SIZE / 2)
             y: -(DEFAULT_IMAGE_SIZE / 2)
             rotation: 0
+            borderRadius: 0
           $scope.objects.push newObject
           $scope.selectObject newObject
           $scope.newObjectName = null
