@@ -48,6 +48,8 @@ define (require) ->
           _.pick obj, 'name'
         frames = []
         for t in [$scope.timeStart...$scope.timeEnd]
+          $scope.time = t
+          $scope.scrubberChange()
           frame = {}
           for object in $scope.objects[1..]
             renderedProperties = $scope.getObjectStyle(object)
@@ -64,8 +66,10 @@ define (require) ->
             height: $('#camera-view').height()
           images: images
           frames: frames
-
         $scope.jsonDump = JSON.stringify(data)
+        # $scope.writeToFile()
+
+      $scope.writeToFile = () ->
         filer = new Filer()
         filer.init
           persistent: true
