@@ -122,7 +122,7 @@ define (require) ->
       # ----------------------------------------------------------------------
       $scope.time       = 0
       $scope.timeStart  = 0
-      $scope.timeEnd    = 300
+      $scope.timeEnd    = 30
       $scope.playSpeed  = 40
 
       $scope.isPaused = true
@@ -145,7 +145,8 @@ define (require) ->
         if didPause
           $scope.play()
 
-      $scope.visibleTicks = [$scope.timeStart...$scope.timeEnd]
+      $scope.visibleTicks = ->
+        [$scope.timeStart...$scope.timeEnd]
 
       # Scene objects
       # ----------------------------------------------------------------------
@@ -207,9 +208,10 @@ define (require) ->
       # Look up interpolated values to show animated steps
       $scope.scrubberChange = () ->
         for object in $scope.objects
-          objectValues = $scope.frames[$scope.time].getData(object.name)
-          for prop in $scope.properties()
-            object[prop] = parseFloat(objectValues[prop])
+          objectValues = $scope.frames[$scope.time]?.getData(object.name)
+          if objectValues?
+            for prop in $scope.properties()
+              object[prop] = parseFloat(objectValues[prop])
 
       $scope.setPropertyAtTime = (property, time, val) ->
         $scope.frames[time].getData($scope.selectedObject.name)[property] = val

@@ -18,6 +18,8 @@
           <input class="zoom" type="range" min="0" max="100"
             ng-model="zoomLevel" ng-change="zoom()">
           <span class="zoom-label">Zoom: {{zoomLevel}}</span>
+          <input id="frames" type="number" ng-model="timeEnd" size="5">
+          <span class="frames-label" for="frames">Frames:</span>
           <input type="button" ng-click="setPlaySpeed(2)" value="2x">
           <input type="button" ng-click="setPlaySpeed(0.5)" value="0.5x">
           <input type="button" ng-click="play()" ng-show="isPaused" value="&#9654;">
@@ -56,20 +58,22 @@
 
     <div class="pure-g bottom">
       <div class="timeline-wrapper pure-u-3-4">
-        <div class="timeline">
+      <div class="timeline" ng-style="{width: 25 * timeEnd}">
 
           <div class="scale">
-            <div class="tick" ng-repeat="tick in visibleTicks"
+            <div class="tick" ng-repeat="tick in visibleTicks()"
               ng-class="{active: tick == time}">
               {{tick}}
             </div>
           </div>
           <input class="scrubber" type="range" ng-model="time"
-            min="{{timeStart}}" max="{{timeEnd}}" ng-change="scrubberChange()"/>
+          min="{{timeStart}}" max="{{timeEnd}}" ng-change="scrubberChange()"
+          ng-style="{width: 25 * timeEnd}"
+          />
 
           <div class="keyframes">
             <div class="tickrow" ng-repeat="object in objects">
-              <div class="tick" ng-repeat="tick in visibleTicks"
+              <div class="tick" ng-repeat="tick in visibleTicks()"
                 ng-class="{active: frames[tick].keys[object.name] != null}">
               </div>
             </div>
