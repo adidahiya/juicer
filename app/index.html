@@ -23,10 +23,14 @@
         </p>
       </div>
       <div class="scene pure-u-3-4">
-        <h3 class="panel-title">Scene</h3>
-        <div class="layer" ng-repeat="layer in layers"
-          ng-class="{selected: isLayerSelected(layer)}">
-          <span>{{layer.name}}</span>
+          <h3 class="panel-title">Scene {{zoom()}}</h3>
+        <div class="canvas-container">
+            <div class="canvas">
+                <div class="layer" ng-repeat="layer in layers"
+                  ng-class="{selected: isLayerSelected(layer)}">
+                  <span>{{layer.name}}</span>
+                </div>
+            </div>
         </div>
       </div>
     </div>

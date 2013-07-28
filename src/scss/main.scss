@@ -103,3 +103,14 @@ html, body, .juicer-controller {
 .selected {
      color: green;
 }
+
+.canvas-container {
+     overflow: auto;
+     height: 100%;
+     width: 100%;
+}
+
+.canvas {
+     height: 200%;
+     width: 200%;
+}

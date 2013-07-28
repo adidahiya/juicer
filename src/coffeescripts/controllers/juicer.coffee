@@ -1,6 +1,9 @@
 define (require) ->
 
   _         = require 'underscore'
+  $         = require 'jquery'
+  mousewheel = require 'mousewheel'
+  jscroll   = require 'jscrollpane'
   angular   = require 'angular'
   angularUI = require 'angularUI'
 
@@ -39,8 +42,12 @@ define (require) ->
       $scope.isLayerSelected = (layer) ->
         $scope.selectedLayer is layer
 
+      jQuery(document).bind 'DOMMouseScroll mousewheel', (e, delta) ->
+        console.log "fire", e, delta
+
     # Initializes the controller
     window.JuicerController.$inject = ['$scope']
+
 
 
   # Public API

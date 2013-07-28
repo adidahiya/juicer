@@ -2,8 +2,11 @@
 (function() {
 
   define(function(require) {
-    var DEBUG, angular, angularUI, initAppModule, _;
+    var $, DEBUG, angular, angularUI, initAppModule, jscroll, mousewheel, _;
     _ = require('underscore');
+    $ = require('jquery');
+    mousewheel = require('mousewheel');
+    jscroll = require('jscrollpane');
     angular = require('angular');
     angularUI = require('angularUI');
     DEBUG = true;
@@ -40,9 +43,12 @@
         $scope.selectLayer = function(layer) {
           return $scope.selectedLayer = layer;
         };
-        return $scope.isLayerSelected = function(layer) {
+        $scope.isLayerSelected = function(layer) {
           return $scope.selectedLayer === layer;
         };
+        return jQuery(document).bind('DOMMouseScroll mousewheel', function(e, delta) {
+          return console.log("fire", e, delta);
+        });
       };
       return window.JuicerController.$inject = ['$scope'];
     };
