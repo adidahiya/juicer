@@ -1,7 +1,11 @@
 // Variables
 // ---------------------------------------------------------------------------
+$lighterGray: #EEE;
 $lightGray: #CCC;
 $gray: #888;
+
+$lightBlue: #3498db;
+$blue: darken($lightBlue, 15%);
 
 $titleHeight: 33px;
 
@@ -21,10 +25,34 @@ html, body, .juicer-controller {
   height: 100%;
 }
 
+body, input {
+  font-family: 'Oxygen';
+}
+
 .panel-title {
   margin: 0;
   padding: 5px;
   border-bottom: solid 1px $lightGray;
+  background: $lighterGray;
+}
+
+input {
+  outline: none;
+}
+
+input[type=button], input[type=submit] {
+  background: $lightBlue;
+  border: solid 1px $blue;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0;
+  font-weight: bold;
+
+  &:hover {
+    background: $blue;
+    border-color: darken($blue, 25%);
+  }
 }
 
 // Top half of UI
@@ -37,9 +65,11 @@ html, body, .juicer-controller {
   height: 100%;
 
   > ul {
+    height: calc(100% - 100px);
+
     li {
       border-bottom: solid 1px $lightGray;
-      padding: 5px;
+      padding: 6px;
 
       > span {
         color: $gray;
@@ -47,6 +77,20 @@ html, body, .juicer-controller {
         display: inline-block;
         width: 30%;
       }
+    }
+  }
+
+  > p {
+    margin: 1em;
+    font-style: italic;
+    height: calc(100% - 100px);
+  }
+
+  .actions {
+    input {
+      width: calc(50% - 2px);
+      float: left;
+      margin-right: -1px;
     }
   }
 }
@@ -66,6 +110,22 @@ html, body, .juicer-controller {
     > span {
       display: inline-block;
       padding: 7px;
+    }
+
+    .zoom-label {
+      margin-left: 10px;
+    }
+
+    > input {
+      background: white;
+      color: $blue;
+      height: 30px;
+      margin-left: -1px;
+
+      &:hover {
+        background: $lightBlue;
+        color: white;
+      }
     }
 
     input[type=range] {
@@ -114,6 +174,31 @@ html, body, .juicer-controller {
   border-top: solid 1px $lightGray;
   border-left: solid 1px $lightGray;
   height: 100%;
+
+  ul {
+    margin-bottom: 5px;
+    li {
+      padding: 5px;
+      border-bottom: solid 1px $lighterGray;
+      cursor: pointer;
+      &:hover {
+        background: $lighterGray;
+      }
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
+
+  form {
+    input[type=text] {
+      width: 40%;
+    }
+    input[type=submit] {
+      height: 26px;
+      line-height: 15px;
+    }
+  }
 }
 
 .timeline-wrapper {
@@ -194,11 +279,11 @@ $tickWidth: 25px;
 }
 
 #camera-view {
-     width: 600px;
-     height: 400px;
-     position: relative;
-     margin: auto;
-     margin-top: 50px;
-     border: 1px gray dotted;
-     pointer-events: none;
+  width: 600px;
+  height: 400px;
+  position: relative;
+  margin: auto;
+  margin-top: 50px;
+  border: 1px gray dashed;
+  pointer-events: none;
 }

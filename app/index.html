@@ -3,6 +3,7 @@
 <head>
   <title>Juicer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='http://fonts.googleapis.com/css?family=Oxygen:400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.1/pure-min.css">
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css">
 </head>
@@ -15,7 +16,7 @@
         <div class="scene-controls">
           <input class="zoom" type="range" min="0" max="100"
             ng-model="zoomLevel" ng-change="zoom()">
-          <span>Zoom: {{zoomLevel}}</span>
+          <span class="zoom-label">Zoom: {{zoomLevel}}</span>
           <input type="button" ng-click="rescale(2)" value="2x">
           <input type="button" ng-click="rescale(0.5)" value="0.5x">
           <input type="button" ng-click="play()" ng-show="isPaused" value="&#9654;">
@@ -43,12 +44,10 @@
         <p ng-hide="selectedObject">
           No object selected.
         </p>
-        <form ng-submit="addKeyframe()">
-          <input type="submit" value="Add keyframe">
-        </form>
-        <form ng-submit="removeKeyframe()">
-          <input type="submit" value="Remove keyframe">
-        </form>
+        <div class="actions">
+          <input type="submit" value="Add keyframe" ng-click="addKeyframe()">
+          <input type="submit" value="Remove keyframe" ng-click="removeKeyframe()">
+        </div>
       </div>
     </div>
 
@@ -87,7 +86,7 @@
         <form ng-submit="addObject()">
           <input type="text" ng-model="newObjectName">
           <input type="text" ng-model="newObjectSrc">
-          <input type="submit" value="add">
+          <input type="submit" value="Add">
         </form>
       </div>
     </div>

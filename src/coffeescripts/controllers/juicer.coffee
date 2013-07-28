@@ -136,8 +136,11 @@ define (require) ->
           keys: {}
           # obj properties interpolated for point in time
           interpolatedValues: {}
-      for i in [$scope.timeStart...$scope.timeEnd]
-        $scope.frames[i].interpolatedValues[$scope.camera.name] = _.clone($scope.camera)
+
+      # Initialize camera frames
+      for i in [$scope.timeStart..$scope.timeEnd]
+        $scope.frames[i].interpolatedValues[$scope.camera.name] = \
+          _.clone($scope.camera)
 
       # Look up interpolated values to show animated steps
       $scope.scrubberChange = () ->
