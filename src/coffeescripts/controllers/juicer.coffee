@@ -26,7 +26,8 @@ define (require) ->
 
       $scope.addLayer = ->
         if $scope.layer?
-          $scope.layers.push {name: $scope.layer}
+          $scope.layers.push
+            name: $scope.layer
           $scope.selectedLayer = layer
           $scope.layer = null
 

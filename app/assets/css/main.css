@@ -1,9 +1,25 @@
 * {
   box-sizing: border-box; }
 
+html, body, .juicer-controller {
+  height: 100%; }
+
+.pure-g.top {
+  height: 75%; }
+
+.properties {
+  height: 100%;
+  border-bottom: solid 1px #cccccc; }
+
+.scene {
+  height: 100%;
+  border-left: solid 1px #cccccc; }
+
+.pure-g.bottom {
+  height: 25%; }
+
 .timeline {
-  width: 100%;
-  border: solid 1px #CCC; }
+  border: solid 1px #cccccc; }
   .timeline input[type=range] {
     -webkit-appearance: none;
     background-color: white;
@@ -12,11 +28,11 @@
     outline: none; }
   .timeline input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background-color: #888;
+    background-color: #888888;
     width: 1px;
     height: 100px; }
   .timeline .scale {
-    border-bottom: solid 1px #CCC;
+    border-bottom: solid 1px #cccccc;
     font-size: 10px; }
     .timeline .scale .tick {
       display: inline-block;
@@ -24,5 +40,5 @@
       padding: 2px;
       border-left: solid 1px #DDD; }
       .timeline .scale .tick.active {
-        background: #CCC;
-        border-color: #888; }
+        background: #cccccc;
+        border-color: #888888; }

@@ -1,10 +1,43 @@
+// Variables
+// ---------------------------------------------------------------------------
+$lightGray: #CCC;
+$gray: #888;
+
+// Globals
+// ---------------------------------------------------------------------------
 * {
   box-sizing: border-box;
 }
 
+html, body, .juicer-controller {
+  height: 100%;
+}
+
+
+// Top half of UI
+// ---------------------------------------------------------------------------
+.pure-g.top {
+  height: 75%;
+}
+
+.properties {
+  height: 100%;
+  border-bottom: solid 1px $lightGray;
+}
+
+.scene {
+  height: 100%;
+  border-left: solid 1px $lightGray;
+}
+
+// Bottom half of UI
+// ---------------------------------------------------------------------------
+.pure-g.bottom {
+  height: 25%;
+}
+
 .timeline {
-  width: 100%;
-  border: solid 1px #CCC;
+  border: solid 1px $lightGray;
 
   input[type=range] {
     -webkit-appearance: none;
@@ -16,13 +49,13 @@
 
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background-color: #888;
+    background-color: $gray;
     width: 1px;
     height: 100px;
   }
 
   .scale {
-    border-bottom: solid 1px #CCC;
+    border-bottom: solid 1px $lightGray;
     font-size: 10px;
 
     .tick {
@@ -32,8 +65,8 @@
       border-left: solid 1px #DDD;
 
       &.active {
-        background: #CCC;
-        border-color: #888;
+        background: $lightGray;
+        border-color: $gray;
       }
     }
   }
