@@ -1,4 +1,8 @@
 juicer
 ======
 
-browser-based 2D animation tool (like blender, but for the web)
+a browser-based 2D animation tool. like blender, for the web.
+
+`foreman start` to compile assets.
+
+single page app at `app/index.html`.
